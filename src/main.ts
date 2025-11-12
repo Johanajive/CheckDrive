@@ -1,11 +1,19 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const port = process.env.PORT || 3000;
-  await app.listen(port);
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      transformOptions:{ enableImplicitConversion: true }
+    }));
 
-  console.log(`App running on: http://localhost:${port}`)
+  await app.listen(process.env.PORT ?? 3000);
+
+  console.log(`Application is running on localhost:${process.env.PORT ?? 3000}`);
 }
 bootstrap();
