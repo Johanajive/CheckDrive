@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { instanceToPlain } from 'class-transformer';
 import { CreateUserDTO } from './dto/create-user.dto';
-import { Users } from 'src/entities/user.entity';
+import { Users } from './entity/user.entity';
 import { Like, Repository } from 'typeorm';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
@@ -33,6 +33,12 @@ export class UsersService {
         if (userFindName.length === 0)
             throw new NotFoundException('No se encontraron usuarios con ese nombre');
         return userFindName
+    }
+
+    async findDocument(document: number) {
+        const userFindDocument = await this.usersRepo.find({ where: { identificationDocument: document } })
+        if (!userFindDocument || userFindDocument.length === 0) throw new NotFoundException(`El usuario con este documento ${document} no existe`)
+        return userFindDocument
     }
 
     create(newUser: CreateUserDTO) {

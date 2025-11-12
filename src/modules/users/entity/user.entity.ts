@@ -26,7 +26,7 @@ export class Users {
     @Column({ nullable: false })
     password: string;
 
-    @Column({ default: RolesEnum.user})
+    @Column({ default: RolesEnum.USER})
     role: RolesEnum;
 
     @Column({ nullable: false, default: true })
