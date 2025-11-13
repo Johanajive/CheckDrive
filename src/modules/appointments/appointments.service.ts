@@ -2,32 +2,33 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Appointment } from 'src/modules/appointments/entities/appointment.entity.ts';
-import { CreateAppointmentDto } from '../../../dto/create-appointment.dto';
-import { UpdateAppointmentDto } from '../../../dto/update-appointment.dto';
+import { Appointments } from './entity/appointments.entity'; 
+import { CreateAppointmentDto } from './dto/create-appointments.dto'; 
+import { UpdateAppointmentDto } from './dto/update-appointments.dto'; 
+
 
 @Injectable()
 export class AppointmentsService {
   constructor(
-    @InjectRepository(Appointment)
-    private appointmentsRepository: Repository<Appointment>,
+    @InjectRepository(Appointments)
+    private appointmentsRepository: Repository<Appointments>,
   ) {}
 
   /** 📝 Create Appointment */
-  async create(createAppointmentDto: CreateAppointmentDto): Promise<Appointment> {
+  async create(createAppointmentDto: CreateAppointmentDto): Promise<Appointments> {
     const newAppointment = this.appointmentsRepository.create(createAppointmentDto);
     return this.appointmentsRepository.save(newAppointment);
   }
 
   /** 📝 Get all Appointments */
-  findAll(): Promise<Appointment[]> {
+  findAll(): Promise<Appointments[]> {
     return this.appointmentsRepository.find({
       relations: ['user', 'vehicle', 'reviewCenter'], // Load related data
     });
   }
 
   /** 📝 Get Appointment by ID */
-  async findOne(id: number): Promise<Appointment> {
+  async findOne(id: number): Promise<Appointments> {
     const appointment = await this.appointmentsRepository.findOne({
       where: { appointment_id: id },
       relations: ['user', 'vehicle', 'reviewCenter'],
@@ -40,7 +41,7 @@ export class AppointmentsService {
   }
 
   /** 📝 Update Appointment */
-  async update(id: number, updateAppointmentDto: UpdateAppointmentDto): Promise<Appointment> {
+  async update(id: number, updateAppointmentDto: UpdateAppointmentDto): Promise<Appointments> {
     await this.appointmentsRepository.update(id, updateAppointmentDto);
     const updatedAppointment = await this.findOne(id);
     return updatedAppointment;
