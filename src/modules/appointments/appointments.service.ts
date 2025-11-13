@@ -14,23 +14,23 @@ export class AppointmentsService {
     private appointmentsRepository: Repository<Appointments>,
   ) {}
 
-  /** 📝 Create Appointment */
+  
   async create(createAppointmentDto: CreateAppointmentDto): Promise<Appointments> {
-    const newAppointment = this.appointmentsRepository.create(createAppointmentDto);
-    return this.appointmentsRepository.save(newAppointment);
+  const newAppointment = this.appointmentsRepository.create(createAppointmentDto);
+    return await this.appointmentsRepository.save(newAppointment);
   }
 
-  /** 📝 Get all Appointments */
+  
   findAll(): Promise<Appointments[]> {
     return this.appointmentsRepository.find({
       relations: ['user', 'vehicle', 'reviewCenter'], // Load related data
     });
   }
 
-  /** 📝 Get Appointment by ID */
+ 
   async findOne(id: number): Promise<Appointments> {
     const appointment = await this.appointmentsRepository.findOne({
-      where: { appointment_id: id },
+      where: { id_appointment: id },
       relations: ['user', 'vehicle', 'reviewCenter'],
     });
 
@@ -40,11 +40,11 @@ export class AppointmentsService {
     return appointment;
   }
 
-  /** 📝 Update Appointment */
+
   async update(id: number, updateAppointmentDto: UpdateAppointmentDto): Promise<Appointments> {
     await this.appointmentsRepository.update(id, updateAppointmentDto);
-    const updatedAppointment = await this.findOne(id);
-    return updatedAppointment;
+    const updatedAppointments = await this.findOne(id);
+    return updatedAppointments;
   }
 
   /** 📝 Delete Appointment (Soft deletion is more common, here we use hard delete) */

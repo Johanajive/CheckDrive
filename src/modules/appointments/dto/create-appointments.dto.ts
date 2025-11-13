@@ -33,5 +33,5 @@ export class CreateAppointmentDto {
   // Initial status 'Active'
   @IsString()
   @IsNotEmpty()
-  status: string;
+  status: boolean;
 }

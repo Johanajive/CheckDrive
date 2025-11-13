@@ -3,13 +3,13 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppointmentsService } from './appointments.service';
 import { AppointmentsController } from './appointments.controller';
-import { Appointment } from './entity/appointment.entity';
-import { AuthModule } from '../auth/auth.module'; // Include the Auth/Roles module
+import { Appointments } from './entity/appointments.entity';
+import { AuthModule } from '../auth/auth.module'; 
 
 @Module({
   imports: [
     // Register the Appointment entity
-    TypeOrmModule.forFeature([Appointment]),
+    TypeOrmModule.forFeature([Appointments]),
     // Import AuthModule to use the Guards
     AuthModule,
   ],

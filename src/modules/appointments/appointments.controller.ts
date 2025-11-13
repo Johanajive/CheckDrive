@@ -14,35 +14,36 @@ import {
 import { AppointmentsService } from './appointments.service';
 import { CreateAppointmentDto } from './/dto/create-appointments.dto';
 import { UpdateAppointmentDto } from './dto/update-appointments.dto';
-import { AuthGuard } from '../auth/auth.guard'; // Import the Auth Guard
-import { RolesGuard } from '../auth/roles.guard'; // Import the Roles Guard
-import { Roles } from '../auth/roles.decorator'; // Import the Decorator
+import { JwtAuthGuard } from '../auth/jwt.guard';
+import { RolesGuard } from '../auth/roles.guard'; 
+import { Roles } from '../auth/roles.decorator'; 
+import { RolesEnum } from 'src/common/enum/roles.enum';
 
 @Controller('appointments')
-@UseGuards(AuthGuard, RolesGuard) // Apply Guards to the entire controller
+@UseGuards(JwtAuthGuard, RolesGuard) 
 export class AppointmentsController {
   constructor(private readonly appointmentsService: AppointmentsService) {}
 
   @Post()
-  @Roles('client') // Only clients can create appointments
+  @Roles(RolesEnum.USER)  
   create(@Body() createAppointmentDto: CreateAppointmentDto) {
     return this.appointmentsService.create(createAppointmentDto);
   }
 
   @Get()
-  @Roles('admin', 'center') // Admins and Centers can view all appointments
+  @Roles(RolesEnum.ADMIN, RolesEnum.center) 
   findAll() {
     return this.appointmentsService.findAll();
   }
 
   @Get(':id')
-  @Roles('admin', 'center', 'client') // Clients can view their own appointments (property verification logic goes in the Service/Guard)
+  @Roles(RolesEnum.ADMIN, RolesEnum.center, RolesEnum.USER)
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.appointmentsService.findOne(id);
   }
 
   @Patch(':id')
-  @Roles('client', 'center') // Clients can reschedule/cancel, Centers can modify the status
+  @Roles(RolesEnum.USER, RolesEnum.center)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateAppointmentDto: UpdateAppointmentDto,
@@ -51,7 +52,7 @@ export class AppointmentsController {
   }
 
   @Delete(':id')
-  @Roles('admin') // Only administrators can delete appointments
+@Roles(RolesEnum.ADMIN)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.appointmentsService.remove(id);
   }
