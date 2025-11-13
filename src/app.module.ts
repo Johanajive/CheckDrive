@@ -19,7 +19,7 @@ import { InspectionCenterModule } from './modules/inspectionCenter/inspectionCen
         password:config.get<string>('DB_PASSWORD'),
         database:config.get<string>('DB_NAME'),
         autoLoadEntities:true,
-        synchronize:false 
+        synchronize:true
       }),
     }),
     InspectionCenterModule
