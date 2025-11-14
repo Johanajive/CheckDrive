@@ -6,6 +6,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module'; 
 import { InspectionCenterModule } from './modules/inspectionCenter/inspectionCenter.module';
+import { LogsModule } from './modules/logs/logs.module'; 
+import { AppointmentsModule } from './modules/appointments/appointments.module'; 
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }),
@@ -20,13 +22,15 @@ import { InspectionCenterModule } from './modules/inspectionCenter/inspectionCen
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_NAME'),
         autoLoadEntities: true,
-        synchronize: false,
-        dropSchema: false,
+        synchronize: true,
+        dropSchema: true,
       })
     }),
     UsersModule,
     AuthModule,
     InspectionCenterModule,
+    LogsModule,
+    AppointmentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

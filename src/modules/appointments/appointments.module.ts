@@ -5,14 +5,15 @@ import { AppointmentsService } from './appointments.service';
 import { AppointmentsController } from './appointments.controller';
 import { Appointments } from './entity/appointments.entity';
 import { AuthModule } from '../auth/auth.module'; 
+import { LogsModule } from '../logs/logs.module';
 
 @Module({
   imports: [
-    // Register the Appointment entity
-    TypeOrmModule.forFeature([Appointments]),
-    // Import AuthModule to use the Guards
-    AuthModule,
-  ],
+  TypeOrmModule.forFeature([Appointments]),
+  AuthModule,
+  LogsModule,
+],
+
   controllers: [AppointmentsController],
   providers: [AppointmentsService],
 })

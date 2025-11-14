@@ -26,7 +26,7 @@ export class Users {
     @Column({ nullable: false })
     password: string;
 
-    @Column({ default: RolesEnum.USER})
+    @Column({ default: RolesEnum.USER })
     role: RolesEnum;
 
     @Column({ nullable: false, default: true })
@@ -34,3 +34,5 @@ export class Users {
     status: boolean;
 
 }
+
+

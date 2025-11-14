@@ -1,18 +1,17 @@
-import { Exclude } from 'class-transformer';
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
-export class Appointments{
-    @PrimaryGeneratedColumn()
-    id_appointment: number;
+export class Appointments {
+  @PrimaryGeneratedColumn()
+  id_appointment: number;
 
-    @Column({ nullable: false })
-    date: Date;
+  @Column({ type: 'date', nullable: false })
+  date: Date;
 
-    @Column({ nullable: false })
-    time: string;
+  @Column({ type: 'time', nullable: false })
+  time: string;
 
-    @Column({ nullable: false, default: true })
-    @Exclude()
-    status: boolean;
+  // Status: Active | Cancelled | Completed
+  @Column({ type: 'varchar', length: 20, default: 'Active' })
+  status: string;
 }

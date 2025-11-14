@@ -28,7 +28,6 @@ export class InspectionCenterController{
     //Endpoint http://localhost:3000/inspectionCenter/all (GET)
     //El usuario requiere tener el rol de ADMIN
     @Get("/all")
-    @Roles(RolesEnum.ADMIN)
     findAllCenters(){
         return this.inspectionCenterService.findAllCenters();
     }
@@ -64,7 +63,6 @@ export class InspectionCenterController{
     //Endpoint: http://localhost:3000/inspectionCenter (POST)
     //El usuario requiere tener el rol de ADMIN
     @Post()
-    @Roles(RolesEnum.ADMIN)
     createInspectionCenter(@Body() dataCenter:CreateInspectionCenterDto){
         return this.inspectionCenterService.createInspectionCenter(dataCenter);
     }
@@ -73,7 +71,6 @@ export class InspectionCenterController{
     //Endpoint: http://localhost:3000/inspectionCenter/1 (PUT)
     //El usuario requiere tener el rol de ADMIN
     @Put(":id")
-    @Roles(RolesEnum.ADMIN)
     updateInspectionCenter(@Param("id", ParseIntPipe) id:number, @Body() newDataCenter:UpdateInspectionCenterDto){
         return this.inspectionCenterService.updateInspectionCenter(id, newDataCenter);
     }
@@ -82,7 +79,6 @@ export class InspectionCenterController{
     //Endpoint: http://localhost:3000/inspectionCenter/2/inactive (PUT)
     //El usuario requiere tener el rol de ADMIN
     @Put(":id/inactive")
-    @Roles(RolesEnum.ADMIN)
     inactiveInspectionCenter(@Param("id", ParseIntPipe) id:number){
         return this.inspectionCenterService.inactiveInspectionCenter(id);
     }
@@ -121,8 +117,8 @@ export class InspectionCenterController{
     //El usuario requiere tener el rol de ADMIN
     @Get("schedules/:name/:day/all")
     @Roles(RolesEnum.ADMIN)
-    findAllSchedulesByDay(@Param("name") name:string, @Body() day:string){
-        return this.inspectionCenterService.findAllSchedulesByDay(name, day);
+    findAllSchedulesByDayTwo(@Param("name") name:string, @Body() day:string){
+        return this.inspectionCenterService.findAllSchedulesByDayTwo(name, day);
     }
     
     //Ruta para crear un nuevo horario en el centro de revisión seleccionado

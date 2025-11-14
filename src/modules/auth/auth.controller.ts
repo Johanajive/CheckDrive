@@ -7,16 +7,30 @@ import { LoginDTO } from '../users/dto/login.dto';
 export class AuthController {
     constructor(private readonly authService: AuthService) { }
 
+    /**
+     * POST /auth/register
+     * register: Registra un nuevo usuario en el sistema.
+     * @param data { CreateUserDTO } - Datos de registro.
+     */
     @Post('register')
     register(@Body() data: CreateUserDTO) {
         return this.authService.register(data);
     }
 
-     @Post('login')
+    /**
+     * POST /auth/login
+     * login: Autentica un usuario y retorna un token JWT.
+     * @param data { LoginDTO } - Credenciales del usuario.
+     */
+    @Post('login')
     login(@Body() data: LoginDTO) {
         return this.authService.login(data);
     }
 
+    /**
+     * GET /auth/profile
+     * getProfile: Retorna el usuario autenticado basado en el token.
+     */
     @Get('profile')
     getProfile(@Request() req) {
         return req.user;

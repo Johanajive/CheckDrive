@@ -1,6 +1,7 @@
-import { Column, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ScheduleInspectionCenterEntity } from "./scheduleInspectionCenter.entity";
 
+@Entity()
 export class InspectionCenterEntity{
     @PrimaryGeneratedColumn()
     id_center: number;
