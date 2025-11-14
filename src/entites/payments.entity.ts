@@ -10,9 +10,6 @@ export class Payment {
   @Column()
   serviceType: string; // 'soat' o 'revision'
 
-  @Column()
-  date_payment: Date;
-
   @Column('decimal')
   amount: number;
 
@@ -22,8 +19,9 @@ export class Payment {
   @Column()
   paymentMethod: string; // 'tarjeta', 'pse', 'efectivo'
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @Column()
+  date_payment: Date;
+
 
 //   @OneToOne(() => Appointment, appointment => appointment.payments { nullable: false, onDelete: 'CASCADE', onUpdate: 'CASCADE' })
 //   @joinColumn({ name: 'id_appointment' }) // nombre de la columna FK en la tabla payments
