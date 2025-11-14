@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module'; 
 import { InspectionCenterModule } from './modules/inspectionCenter/inspectionCenter.module';
+import { VehiclesDocumentsModule } from './modules/vehicles-documents/vehicles-documents.module';
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }),
@@ -27,6 +28,7 @@ import { InspectionCenterModule } from './modules/inspectionCenter/inspectionCen
     UsersModule,
     AuthModule,
     InspectionCenterModule,
+    VehiclesDocumentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
