@@ -1,4 +1,7 @@
 // src/appointments/appointments.controller.ts
+// Controller for managing appointments with role-based access control
+// and JWT authentication
+
 import {
   Controller,
   Get,
@@ -9,6 +12,9 @@ import {
   Delete,
   ParseIntPipe,
   UseGuards,
+  Req,
+  // Additional imports for guards and roles
+  // Added imports for authentication and authorization
 } from '@nestjs/common';
 import { AppointmentsService } from './appointments.service';
 import { CreateAppointmentDto } from './/dto/create-appointments.dto';
@@ -17,6 +23,8 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { RolesEnum } from 'src/common/enum/roles.enum';
+// Applying guards to protect the routes
+
 
 // Controlador del módulo de citas (Appointments)
 // Maneja las rutas HTTP relacionadas con creación, consulta, actualización y cancelación de citas

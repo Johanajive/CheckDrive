@@ -1,14 +1,14 @@
 import { IsInt, IsDateString, IsString, IsNotEmpty, Matches } from 'class-validator';
-
+//
 export class CreateAppointmentDto {
   @IsInt()
   @IsNotEmpty()
   user_id: number;
-
+//
   @IsInt()
   @IsNotEmpty()
   vehicle_id: number;
-
+  
   @IsInt()
   @IsNotEmpty()
   center_id: number;

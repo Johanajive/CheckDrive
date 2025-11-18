@@ -1,4 +1,4 @@
-
+// src/modules/appointments/interface/appointments.interface.ts
 export interface Appointment {
   id_appointment: number;
   id_user: number; 
