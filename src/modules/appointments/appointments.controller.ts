@@ -1,6 +1,4 @@
 // src/appointments/appointments.controller.ts
-// Controller for managing appointments with role-based access control
-// and JWT authentication
 
 import {
   Controller,
@@ -13,68 +11,130 @@ import {
   ParseIntPipe,
   UseGuards,
   Req,
-  // Additional imports for guards and roles
-  // Added imports for authentication and authorization
+  HttpStatus, // <-- Importar HttpStatus para las respuestas
 } from '@nestjs/common';
 import { AppointmentsService } from './appointments.service';
-import { CreateAppointmentDto } from './/dto/create-appointments.dto';
+import { CreateAppointmentDto } from './dto/create-appointments.dto';
 import { UpdateAppointmentDto } from './dto/update-appointments.dto';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { RolesEnum } from 'src/common/enum/roles.enum';
-// Applying guards to protect the routes
-
+import { Appointments } from './entity/appointments.entity'; // <-- Importar la entidad/esquema de respuesta
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth, // <-- Importar para documentar JWT
+  ApiBody,
+  ApiParam,
+} from '@nestjs/swagger';
 
 // Controlador del módulo de citas (Appointments)
-// Maneja las rutas HTTP relacionadas con creación, consulta, actualización y cancelación de citas
-
+@ApiTags('Appointments (Citas)') // Etiqueta principal para Swagger
+@ApiBearerAuth() // Indica que todas las rutas requieren autenticación con token
 @Controller('appointments')
 @UseGuards(JwtAuthGuard, RolesGuard)
-// Aplica autenticación JWT y validación por roles a todas las rutas de este controlador
 export class AppointmentsController {
-  constructor(private readonly appointmentsService: AppointmentsService) { }
+  constructor(private readonly appointmentsService: AppointmentsService) {}
 
-  /**
-   * Crear una nueva cita
-   * - Solo los usuarios con rol USER pueden crear una cita
-   * - Recibe un DTO para validar la estructura de los datos
-   */
+  // --- POST /appointments ---
   @Post()
   @Roles(RolesEnum.USER)
+  @ApiOperation({
+    summary: 'Crear una nueva cita.',
+    description: 'Solo usuarios con el rol **USER** pueden programar una cita.',
+  })
+  @ApiBody({
+    type: CreateAppointmentDto,
+    description: 'Datos necesarios para crear la cita.',
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Cita creada exitosamente.',
+    type: Appointments,
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Acceso denegado. Se requiere el rol USER.',
+  })
   create(@Body() dto: CreateAppointmentDto) {
     return this.appointmentsService.create(dto);
   }
 
-  /**
-   * Obtener todas las citas
-   * - Solo administradores o usuarios con permisos pueden listar todas las citas
-   * - No requiere parámetros
-   */
+  // --- GET /appointments ---
   @Get()
   @Roles(RolesEnum.ADMIN, RolesEnum.USER)
+  @ApiOperation({
+    summary: 'Obtener todas las citas.',
+    description:
+      'Usuarios con rol **ADMIN** ven todas las citas. Usuarios con rol **USER** podrían ver solo las propias (depende de la lógica del servicio).',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Lista de citas obtenida.',
+    type: [Appointments], // Array del esquema
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Token de autenticación inválido o ausente.',
+  })
   findAll() {
     return this.appointmentsService.findAll();
   }
 
-  /**
-   * Obtener una cita por ID
-   * - Permite a un usuario o administrador visualizar una cita específica
-   * - Valida que el ID recibido sea un número mediante ParseIntPipe
-   */
+  // --- GET /appointments/:id ---
   @Get(':id')
   @Roles(RolesEnum.ADMIN, RolesEnum.USER)
+  @ApiOperation({
+    summary: 'Obtener una cita por ID.',
+    description: 'Permite la visualización a usuarios y administradores.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID de la cita a buscar.',
+    type: Number,
+    example: 789,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Cita encontrada.',
+    type: Appointments,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Cita no encontrada o ID inválido.',
+  })
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.appointmentsService.findOne(id);
   }
 
-  /**
-   * Actualizar los datos de una cita
-   * - Solo el usuario dueño de la cita o roles autorizados pueden actualizarla
-   * - Recibe un DTO parcial (PartialType) con los campos que se desean modificar
-   */
+  // --- PATCH /appointments/:id ---
   @Patch(':id')
   @Roles(RolesEnum.USER)
+  @ApiOperation({
+    summary: 'Actualizar una cita.',
+    description: 'Solo usuarios con rol **USER** (propietario) pueden actualizar los datos de la cita.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID de la cita a actualizar.',
+    type: Number,
+    example: 789,
+  })
+  @ApiBody({
+    type: UpdateAppointmentDto,
+    description: 'Campos parciales de la cita a modificar (e.g., solo la hora).',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Cita actualizada exitosamente.',
+    type: Appointments,
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Acceso denegado. Se requiere el rol USER o no es el propietario de la cita.',
+  })
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateAppointmentDto,
@@ -82,18 +142,34 @@ export class AppointmentsController {
     return this.appointmentsService.update(id, dto);
   }
 
-  /**
-   * Cancelar una cita (soft delete)
-   * - Solo los administradores pueden cancelar una cita
-   * - El servicio no elimina el registro, solo cambia su estado
-   */
+  // --- DELETE /appointments/:id (Cancelación) ---
   @Delete(':id')
   @Roles(RolesEnum.ADMIN)
+  @ApiOperation({
+    summary: 'Cancelar (Eliminar Lógico) una cita.',
+    description:
+      'Solo usuarios con rol **ADMIN** pueden cancelar la cita (cambio de estado).',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID de la cita a cancelar.',
+    type: Number,
+    example: 789,
+  })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'Cita cancelada exitosamente.',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Acceso denegado. Se requiere el rol ADMIN.',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Cita no encontrada.',
+  })
   remove(@Param('id', ParseIntPipe) id: number) {
+    // Si la lógica es "soft delete", el servicio debe manejar el cambio de estado a "Cancelled"
     return this.appointmentsService.remove(id);
   }
 }
-
-
-
-

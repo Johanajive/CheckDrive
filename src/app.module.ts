@@ -12,6 +12,7 @@ import { AppointmentsModule } from './modules/appointments/appointments.module';
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
+      
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
