@@ -1,4 +1,3 @@
-
 import {
   Controller,
   Get,
@@ -6,7 +5,17 @@ import {
   Patch,
   Body,
   Param,
+  UseGuards,
 } from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiBody,
+  ApiParam,
+} from '@nestjs/swagger';
+
 import { VehiclesDocumentsService } from './vehicles-documents.service';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
@@ -14,110 +23,113 @@ import { CreateDocumentDto } from './dto/create-document.dto';
 import { CreateDocumentTypeDto } from './dto/create-document-type.dto';
 import { UpdateDocumentTypeDto } from './dto/update-document-type.dto';
 
+import { JwtAuthGuard } from '../auth/jwt.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
+import { RolesEnum } from 'src/common/enum/roles.enum';
+
+// ====== Swagger tag ======
+@ApiTags('Vehicles & Documents')
+
+// ====== JWT Bearer auth token ======
+@ApiBearerAuth('bearerAuth')
+
+// ====== Global guards for controller ======
+@UseGuards(JwtAuthGuard, RolesGuard)
+
 @Controller('vehicles-documents')
 export class VehiclesDocumentsController {
   constructor(private readonly service: VehiclesDocumentsService) {}
 
   // ==================== VEHICLES ====================
 
-  /**
-   * GET /vehicles-documents/vehicles
-   * Get all vehicles without documents
-   */
   @Get('vehicles')
-  async getAllVehicles() {
+  @Roles(RolesEnum.ADMIN)
+  @ApiOperation({ summary: 'Obtener todos los vehículos activos (sin documentos)' })
+  @ApiResponse({ status: 200, description: 'Lista de vehículos' })
+  getAllVehicles() {
     return this.service.getAllVehicles();
   }
 
-  /**
-   * GET /vehicles-documents/vehicles/with-documents
-   * Get all vehicles WITH documents
-   */
   @Get('vehicles/with-documents')
-  async getAllVehiclesWithDocuments() {
+  @Roles(RolesEnum.ADMIN)
+  @ApiOperation({ summary: 'Obtener vehículos con sus documentos asociados' })
+  @ApiResponse({ status: 200, description: 'Lista de vehículos con documentos' })
+  getAllVehiclesWithDocuments() {
     return this.service.getAllVehiclesWithDocuments();
   }
 
-  /**
-   * GET /vehicles-documents/vehicles/:plate
-   * Get vehicle by plate WITH documents
-   */
   @Get('vehicles/:plate')
-  async getVehicleByPlate(@Param('plate') plate: string) {
+  @Roles(RolesEnum.ADMIN)
+  @ApiOperation({ summary: 'Obtener vehículo por placa (incluye documentos)' })
+  @ApiParam({ name: 'plate', description: 'Placa del vehículo' })
+  @ApiResponse({ status: 200, description: 'Vehículo encontrado' })
+  getVehicleByPlate(@Param('plate') plate: string) {
     return this.service.getVehicleByPlate(plate);
   }
 
-  /**
-   * POST /vehicles-documents/vehicles
-   * Create a new vehicle
-   */
   @Post('vehicles')
-  async createVehicle(@Body() createVehicleDto: CreateVehicleDto) {
-    return this.service.createVehicle(createVehicleDto);
+  @Roles(RolesEnum.ADMIN)
+  @ApiOperation({ summary: 'Crear un nuevo vehículo' })
+  @ApiBody({ type: CreateVehicleDto })
+  createVehicle(@Body() dto: CreateVehicleDto) {
+    return this.service.createVehicle(dto);
   }
 
-  /**
-   * PATCH /vehicles-documents/vehicles/:plate
-   * Update vehicle by plate (plate cannot be modified)
-   */
   @Patch('vehicles/:plate')
-  async updateVehicle(
-    @Param('plate') plate: string,
-    @Body() updateVehicleDto: UpdateVehicleDto,
-  ) {
-    return this.service.updateVehicle(plate, updateVehicleDto);
+  @Roles(RolesEnum.ADMIN)
+  @ApiOperation({ summary: 'Actualizar datos de un vehículo por placa' })
+  @ApiParam({ name: 'plate', description: 'Placa del vehículo' })
+  @ApiBody({ type: UpdateVehicleDto })
+  updateVehicle(@Param('plate') plate: string, @Body() dto: UpdateVehicleDto) {
+    return this.service.updateVehicle(plate, dto);
   }
 
   // ==================== DOCUMENTS ====================
 
-  /**
-   * POST /vehicles-documents/documents
-   * Create a document for a vehicle
-   */
   @Post('documents')
-  async createDocument(@Body() createDocumentDto: CreateDocumentDto) {
-    return this.service.createDocument(createDocumentDto);
+  @Roles(RolesEnum.ADMIN)
+  @ApiOperation({ summary: 'Crear un documento para un vehículo' })
+  @ApiBody({ type: CreateDocumentDto })
+  createDocument(@Body() dto: CreateDocumentDto) {
+    return this.service.createDocument(dto);
   }
 
-  /**
-   * GET /vehicles-documents/documents/:plate
-   * Get all documents for a vehicle (by plate)
-   */
   @Get('documents/:plate')
-  async getDocumentsByVehiclePlate(@Param('plate') plate: string) {
+  @Roles(RolesEnum.ADMIN)
+  @ApiOperation({ summary: 'Obtener documentos de un vehículo por placa' })
+  @ApiParam({ name: 'plate', description: 'Placa del vehículo' })
+  getDocumentsByVehiclePlate(@Param('plate') plate: string) {
     return this.service.getDocumentsByVehiclePlate(plate);
   }
 
   // ==================== DOCUMENT TYPES ====================
 
-  /**
-   * GET /vehicles-documents/document-types
-   * Get all document types
-   */
   @Get('document-types')
-  async getAllDocumentTypes() {
+  @Roles(RolesEnum.ADMIN)
+  @ApiOperation({ summary: 'Listar todos los tipos de documentos' })
+  @ApiResponse({ status: 200, description: 'Lista de tipos de documentos' })
+  getAllDocumentTypes() {
     return this.service.getAllDocumentTypes();
   }
 
-  /**
-   * POST /vehicles-documents/document-types
-   * Create a new document type
-   */
   @Post('document-types')
-  async createDocumentType(@Body() createDocumentTypeDto: CreateDocumentTypeDto) {
-    return this.service.createDocumentType(createDocumentTypeDto);
+  @Roles(RolesEnum.ADMIN)
+  @ApiOperation({ summary: 'Crear un nuevo tipo de documento' })
+  @ApiBody({ type: CreateDocumentTypeDto })
+  createDocumentType(@Body() dto: CreateDocumentTypeDto) {
+    return this.service.createDocumentType(dto);
   }
 
-  /**
-   * PATCH /vehicles-documents/document-types/:id
-   * Update a document type
-   */
   @Patch('document-types/:id')
-  async updateDocumentType(
+  @Roles(RolesEnum.ADMIN)
+  @ApiOperation({ summary: 'Actualizar un tipo de documento' })
+  @ApiParam({ name: 'id', description: 'ID del tipo de documento' })
+  @ApiBody({ type: UpdateDocumentTypeDto })
+  updateDocumentType(
     @Param('id') id: string,
-    @Body() updateDocumentTypeDto: UpdateDocumentTypeDto,
+    @Body() dto: UpdateDocumentTypeDto,
   ) {
-    return this.service.updateDocumentType(Number(id), updateDocumentTypeDto);
+    return this.service.updateDocumentType(Number(id), dto);
   }
 }
-
