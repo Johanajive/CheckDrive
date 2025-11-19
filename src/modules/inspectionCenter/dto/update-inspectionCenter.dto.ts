@@ -1,23 +1,23 @@
 import { IsOptional, IsString, IsBoolean } from "class-validator";
 
 export class UpdateInspectionCenterDto {
-    @IsOptional()
-    @IsString()
+    @IsOptional({message: "El nombre del centro de revisión es opcional al actualizarse"})
+    @IsString({message:"El nombre del centro de revisión debe ser un string (cadena de caracteres)"})
     name?:string;
 
-    @IsOptional()
-    @IsString()
+    @IsOptional({message: "La ciudad del centro de revisión es opcional al actualizarse"})
+    @IsString({message:"La ciudad del centro de revisión debe ser un string (cadena de caracteres)"})
     city?:string;
 
-    @IsOptional()
-    @IsString()
+    @IsOptional({message: "La dirección del centro de revisión es opcional al actualizarse"})
+    @IsString({message:"La dirección del centro de revisión debe ser un string (cadena de caracteres)"})
     address?:string;
 
-    @IsOptional()
-    @IsString()
+    @IsOptional({message: "El teléfono del centro de revisión es opcional al actualizarse"})
+    @IsString({message:"El teléfono del centro de revisión debe ser un string (cadena de caracteres)"})
     phone?:string;
 
-    @IsOptional()
-    @IsBoolean()
+    @IsOptional({message: "El estado del centro de revisión es opcional al actualizarse"})
+    @IsBoolean({message:"El estado del centro de revisión debe ser un boolean(true o false)"})
     status?:boolean;
 }

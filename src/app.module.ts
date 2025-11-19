@@ -22,7 +22,7 @@ import { AppointmentsModule } from './modules/appointments/appointments.module';
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_NAME'),
         autoLoadEntities: true,
-        synchronize: true,
+        synchronize: false,
         dropSchema: true,
       })
     }),

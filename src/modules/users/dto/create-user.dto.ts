@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, Length, Matches, IsEmail } from "class-validator";
+import { IsNotEmpty, IsString, Length, Matches, IsEmail, IsInt, Min, Max } from "class-validator";
 import { RolesEnum } from "src/common/enum/roles.enum";
 
 export class CreateUserDTO {
@@ -19,8 +19,9 @@ export class CreateUserDTO {
     email: string;
 
     @IsNotEmpty({ message: 'La cédula es obligatoria' })
-    @Matches(/^[0-9]{7,12}$/, { message: 'La cédula debe tener entre 7 y 12 dígitos, sin espacios ni letras' })
-    @Matches(/^[0-9]+$/, { message: 'La cédula solo permite números' })
+    @IsInt({message:"La cédula solo permite números enteros"})
+    @Min(1000000, {message:"La cédula debe tener mínimo 7 dígitos"})
+    @Max(999999999999, {message:"La cédula debe tener máximo 12 dígitos"})
     identificationDocument: number;
 
     @IsString({ message: 'El número de celular debe ser una cadena de caracteres' })

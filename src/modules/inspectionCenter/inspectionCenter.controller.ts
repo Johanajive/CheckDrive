@@ -28,6 +28,7 @@ export class InspectionCenterController{
     //Endpoint http://localhost:3000/inspectionCenter/all (GET)
     //El usuario requiere tener el rol de ADMIN
     @Get("/all")
+    @Roles(RolesEnum.ADMIN)
     findAllCenters(){
         return this.inspectionCenterService.findAllCenters();
     }
@@ -42,18 +43,18 @@ export class InspectionCenterController{
     }
 
     //Ruta para obtener un centro de revisión por su nombre
-    //Endpoint http://localhost:3000/inspectionCenter/CentroAutos (GET)
+    //Endpoint http://localhost:3000/inspectionCenter/byName/CentroAutos (GET)
     //El usuario requiere tener el rol de USER o ADMIN
-    @Get(':name')
+    @Get('/byName/:name')
     @Roles(RolesEnum.USER,RolesEnum.ADMIN)
     findOneCenterByName(@Param("name") name:string){
         return this.inspectionCenterService.findOneCenterByName(name);
     }
 
     //Ruta para obtener todos los centros de revisión en una ciudad específica
-    //Endpoint http://localhost:3000/inspectionCenter/Bogota (GET)
+    //Endpoint http://localhost:3000/inspectionCenter/byCity/Bogota (GET)
     //El usuario requiere tener el rol de USER o ADMIN
-    @Get(':city')
+    @Get('/byCity/:city')
     @Roles(RolesEnum.USER,RolesEnum.ADMIN)
     findCentersByCity(@Param("city") city:string){
         return this.inspectionCenterService.findCentersByCity(city);
@@ -63,6 +64,7 @@ export class InspectionCenterController{
     //Endpoint: http://localhost:3000/inspectionCenter (POST)
     //El usuario requiere tener el rol de ADMIN
     @Post()
+    @Roles(RolesEnum.ADMIN)
     createInspectionCenter(@Body() dataCenter:CreateInspectionCenterDto){
         return this.inspectionCenterService.createInspectionCenter(dataCenter);
     }
@@ -71,6 +73,7 @@ export class InspectionCenterController{
     //Endpoint: http://localhost:3000/inspectionCenter/1 (PUT)
     //El usuario requiere tener el rol de ADMIN
     @Put(":id")
+    @Roles(RolesEnum.ADMIN)
     updateInspectionCenter(@Param("id", ParseIntPipe) id:number, @Body() newDataCenter:UpdateInspectionCenterDto){
         return this.inspectionCenterService.updateInspectionCenter(id, newDataCenter);
     }
@@ -79,6 +82,7 @@ export class InspectionCenterController{
     //Endpoint: http://localhost:3000/inspectionCenter/2/inactive (PUT)
     //El usuario requiere tener el rol de ADMIN
     @Put(":id/inactive")
+    @Roles(RolesEnum.ADMIN)
     inactiveInspectionCenter(@Param("id", ParseIntPipe) id:number){
         return this.inspectionCenterService.inactiveInspectionCenter(id);
     }
@@ -86,18 +90,18 @@ export class InspectionCenterController{
     /*Controladores servicios Modulo Horarios Centro de Revisión*/
 
     //Ruta para obtener los horarios activos de un centro de revisión por su nombre
-    //Endpoint http://localhost:3000/inspectionCenter/schedules/1/active (GET)
+    //Endpoint http://localhost:3000/inspectionCenter/schedules/CENTROREV/active (GET)
     //El usuario requiere tener el rol de ADMIN o USER
-    @Get("schedules/:id/active")
+    @Get("schedules/:name/active")
     @Roles(RolesEnum.USER, RolesEnum.ADMIN)
     findActiveSchedulesByCenterName(@Param("name") name:string){
         return this.inspectionCenterService.findActiveSchedulesByCenterName(name);
     }
 
     //Ruta para obtener los horarios (activos e inactivos) de un centro de revisión por su nombre
-    //Endpoint http://localhost:3000/inspectionCenter/schedules/1/all (GET)
+    //Endpoint http://localhost:3000/inspectionCenter/schedules/CENTROREV/all (GET)
     //El usuario requiere tener el rol de ADMIN
-    @Get("schedules/:id/all")
+    @Get("schedules/:name/all")
     @Roles(RolesEnum.ADMIN)
     findAllSchedulesByCenterName(@Param("name") name:string){
         return this.inspectionCenterService.findAllSchedulesByCenterName(name);
@@ -106,19 +110,19 @@ export class InspectionCenterController{
     //Ruta para obtener los horarios activos de un centro de revisión por su nombre y día específico
     //Endpoint http://localhost:3000/inspectionCenter/schedules/CentroAutos/Martes/active (GET)
     //El usuario requiere tener el rol de ADMIN o USER
-    @Get("schedules/:name/:day/active")
+    @Get("schedules/:name/byDay/:day/active")
     @Roles(RolesEnum.USER, RolesEnum.ADMIN)
-    findActiveSchedulesByDay(@Param("name") name:string, @Body() day:string){
+    findActiveSchedulesByDay(@Param("name") name:string, @Param("day") day:string){
         return this.inspectionCenterService.findActiveSchedulesByDay(name, day);
     }
 
     //Ruta para obtener los horarios (activos e inactivos) de un centro de revisión por su nombre y día específico
     //Endpoint http://localhost:3000/inspectionCenter/schedules/CentroAutos/Martes/all (GET)
     //El usuario requiere tener el rol de ADMIN
-    @Get("schedules/:name/:day/all")
+    @Get("schedules/:name/byDay/:day/all")
     @Roles(RolesEnum.ADMIN)
-    findAllSchedulesByDayTwo(@Param("name") name:string, @Body() day:string){
-        return this.inspectionCenterService.findAllSchedulesByDayTwo(name, day);
+    findAllSchedulesByDay(@Param("name") name:string, @Param("day") day:string){
+        return this.inspectionCenterService.findAllSchedulesByDay(name, day);
     }
     
     //Ruta para crear un nuevo horario en el centro de revisión seleccionado
