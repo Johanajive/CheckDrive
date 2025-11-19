@@ -1,3 +1,4 @@
+
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,6 +10,7 @@ import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { CreateDocumentTypeDto } from './dto/create-document-type.dto';
 import { UpdateDocumentTypeDto } from './dto/update-document-type.dto';
+import { LogsService } from '../logs/logs.service';
 
 @Injectable()
 export class VehiclesDocumentsService {
@@ -19,34 +21,44 @@ export class VehiclesDocumentsService {
     private documentRepository: Repository<DocumentEntity>,
     @InjectRepository(DocumentTypeEntity)
     private documentTypeRepository: Repository<DocumentTypeEntity>,
+    private readonly logsService: LogsService,
   ) {}
 
   // ==================== VEHICLES ====================
 
-  /**
-   * Get all active vehicles without documents
-   */
   async getAllVehicles() {
-    return this.vehicleRepository.find({
+    const result = await this.vehicleRepository.find({
       where: { status: true },
       select: ['id_vehicle', 'plate', 'brand', 'model', 'type', 'created_at', 'updated_at'],
     });
+
+    await this.logsService.create({
+      date: new Date(),
+      host: 'localhost',
+      service: 'VehiclesDocumentsService',
+      content: 'Consulta general de vehículos activos.',
+    });
+
+    return result;
   }
 
-  /**
-   * Get all active vehicles WITH documents
-   */
   async getAllVehiclesWithDocuments() {
-    return this.vehicleRepository.find({
+    const result = await this.vehicleRepository.find({
       where: { status: true },
       relations: ['documents', 'documents.document_type'],
       select: ['id_vehicle', 'plate', 'brand', 'model', 'type', 'created_at', 'updated_at'],
     });
+
+    await this.logsService.create({
+      date: new Date(),
+      host: 'localhost',
+      service: 'VehiclesDocumentsService',
+      content: 'Consulta de vehículos con documentos.',
+    });
+
+    return result;
   }
 
-  /**
-   * Get vehicle by plate with documents
-   */
   async getVehicleByPlate(plate: string) {
     const vehicle = await this.vehicleRepository.findOne({
       where: { plate: plate.toUpperCase(), status: true },
@@ -58,12 +70,16 @@ export class VehiclesDocumentsService {
       throw new NotFoundException(`Vehicle with plate ${plate} not found`);
     }
 
+    await this.logsService.create({
+      date: new Date(),
+      host: 'localhost',
+      service: 'VehiclesDocumentsService',
+      content: `Consulta de vehículo por placa: ${plate}`,
+    });
+
     return vehicle;
   }
 
-  /**
-   * Get vehicle by plate without documents
-   */
   async getVehicleByPlateBasic(plate: string) {
     const vehicle = await this.vehicleRepository.findOne({
       where: { plate: plate.toUpperCase(), status: true },
@@ -74,16 +90,19 @@ export class VehiclesDocumentsService {
       throw new NotFoundException(`Vehicle with plate ${plate} not found`);
     }
 
+    await this.logsService.create({
+      date: new Date(),
+      host: 'localhost',
+      service: 'VehiclesDocumentsService',
+      content: `Consulta básica de vehículo por placa: ${plate}`,
+    });
+
     return vehicle;
   }
 
-  /**
-   * Create a new vehicle
-   */
   async createVehicle(createVehicleDto: CreateVehicleDto) {
     const normalizedPlate = createVehicleDto.plate.toUpperCase();
 
-    // Check if plate already exists
     const existingVehicle = await this.vehicleRepository.findOne({
       where: { plate: normalizedPlate },
     });
@@ -99,6 +118,13 @@ export class VehiclesDocumentsService {
 
     await this.vehicleRepository.save(vehicle);
 
+    await this.logsService.create({
+      date: new Date(),
+      host: 'localhost',
+      service: 'VehiclesDocumentsService',
+      content: `Vehículo creado con placa: ${normalizedPlate}`,
+    });
+
     return {
       id_vehicle: vehicle.id_vehicle,
       plate: vehicle.plate,
@@ -110,9 +136,6 @@ export class VehiclesDocumentsService {
     };
   }
 
-  /**
-   * Update vehicle (placa cannot be updated)
-   */
   async updateVehicle(plate: string, updateVehicleDto: UpdateVehicleDto) {
     const vehicle = await this.vehicleRepository.findOne({
       where: { plate: plate.toUpperCase(), status: true },
@@ -122,7 +145,6 @@ export class VehiclesDocumentsService {
       throw new NotFoundException(`Vehicle with plate ${plate} not found`);
     }
 
-    // Update only allowed fields
     if (updateVehicleDto.brand !== undefined) {
       vehicle.brand = updateVehicleDto.brand;
     }
@@ -134,6 +156,13 @@ export class VehiclesDocumentsService {
     }
 
     await this.vehicleRepository.save(vehicle);
+
+    await this.logsService.create({
+      date: new Date(),
+      host: 'localhost',
+      service: 'VehiclesDocumentsService',
+      content: `Vehículo actualizado con placa: ${plate}`,
+    });
 
     return {
       id_vehicle: vehicle.id_vehicle,
@@ -148,11 +177,7 @@ export class VehiclesDocumentsService {
 
   // ==================== DOCUMENTS ====================
 
-  /**
-   * Create a document for a vehicle
-   */
   async createDocument(createDocumentDto: CreateDocumentDto) {
-    // Verify vehicle exists
     const vehicle = await this.vehicleRepository.findOne({
       where: { id_vehicle: createDocumentDto.vehicle_id, status: true },
     });
@@ -161,7 +186,6 @@ export class VehiclesDocumentsService {
       throw new NotFoundException('Vehicle not found');
     }
 
-    // Verify document type exists and is active
     const docType = await this.documentTypeRepository.findOne({
       where: { id_document_type: createDocumentDto.document_type_id, status: true },
     });
@@ -170,7 +194,6 @@ export class VehiclesDocumentsService {
       throw new NotFoundException('Document type not found');
     }
 
-    // Validate dates
     const startDate = new Date(createDocumentDto.start_date);
     const endDate = new Date(createDocumentDto.end_date);
 
@@ -187,6 +210,13 @@ export class VehiclesDocumentsService {
 
     await this.documentRepository.save(document);
 
+    await this.logsService.create({
+      date: new Date(),
+      host: 'localhost',
+      service: 'VehiclesDocumentsService',
+      content: `Documento creado para vehículo ID: ${createDocumentDto.vehicle_id}`,
+    });
+
     return {
       id_document: document.id_document,
       start_date: document.start_date,
@@ -199,9 +229,6 @@ export class VehiclesDocumentsService {
     };
   }
 
-  /**
-   * Get all documents for a vehicle (by plate)
-   */
   async getDocumentsByVehiclePlate(plate: string) {
     const vehicle = await this.vehicleRepository.findOne({
       where: { plate: plate.toUpperCase(), status: true },
@@ -212,26 +239,35 @@ export class VehiclesDocumentsService {
       throw new NotFoundException(`Vehicle with plate ${plate} not found`);
     }
 
+    await this.logsService.create({
+      date: new Date(),
+      host: 'localhost',
+      service: 'VehiclesDocumentsService',
+      content: `Consulta de documentos del vehículo con placa: ${plate}`,
+    });
+
     return vehicle.documents;
   }
 
   // ==================== DOCUMENT TYPES ====================
 
-  /**
-   * Get all active document types
-   */
   async getAllDocumentTypes() {
-    return this.documentTypeRepository.find({
+    const result = await this.documentTypeRepository.find({
       where: { status: true },
       select: ['id_document_type', 'name', 'created_at', 'updated_at'],
     });
+
+    await this.logsService.create({
+      date: new Date(),
+      host: 'localhost',
+      service: 'VehiclesDocumentsService',
+      content: 'Consulta de todos los tipos de documentos.',
+    });
+
+    return result;
   }
 
-  /**
-   * Create a new document type
-   */
   async createDocumentType(createDocumentTypeDto: CreateDocumentTypeDto) {
-    // Check if name already exists
     const existingType = await this.documentTypeRepository.findOne({
       where: { name: createDocumentTypeDto.name },
     });
@@ -243,6 +279,13 @@ export class VehiclesDocumentsService {
     const docType = this.documentTypeRepository.create(createDocumentTypeDto);
     await this.documentTypeRepository.save(docType);
 
+    await this.logsService.create({
+      date: new Date(),
+      host: 'localhost',
+      service: 'VehiclesDocumentsService',
+      content: `Tipo de documento creado: ${createDocumentTypeDto.name}`,
+    });
+
     return {
       id_document_type: docType.id_document_type,
       name: docType.name,
@@ -250,9 +293,6 @@ export class VehiclesDocumentsService {
     };
   }
 
-  /**
-   * Update a document type
-   */
   async updateDocumentType(id: number, updateDocumentTypeDto: UpdateDocumentTypeDto) {
     const docType = await this.documentTypeRepository.findOne({
       where: { id_document_type: id, status: true },
@@ -263,7 +303,6 @@ export class VehiclesDocumentsService {
     }
 
     if (updateDocumentTypeDto.name !== undefined) {
-      // Check if new name already exists
       const existingType = await this.documentTypeRepository.findOne({
         where: { name: updateDocumentTypeDto.name },
       });
@@ -277,10 +316,17 @@ export class VehiclesDocumentsService {
 
     await this.documentTypeRepository.save(docType);
 
+    await this.logsService.create({
+      date: new Date(),
+      host: 'localhost',
+      service: 'VehiclesDocumentsService',
+      content: `Tipo de documento actualizado ID: ${id}`,
+    });
+
     return {
       id_document_type: docType.id_document_type,
       name: docType.name,
       updated_at: docType.updated_at,
     };
   }
-}
+};

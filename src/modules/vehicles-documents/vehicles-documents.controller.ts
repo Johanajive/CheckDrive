@@ -1,3 +1,4 @@
+
 import {
   Controller,
   Get,
@@ -119,3 +120,4 @@ export class VehiclesDocumentsController {
     return this.service.updateDocumentType(Number(id), updateDocumentTypeDto);
   }
 }
+

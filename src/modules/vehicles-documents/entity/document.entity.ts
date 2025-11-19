@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
+
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { VehicleEntity } from './vehicle.entity';
 import { DocumentTypeEntity } from './document-type.entity';
@@ -14,10 +15,15 @@ export class DocumentEntity {
   @Column({ type: 'date', nullable: false })
   end_date: Date;
 
-  @ManyToOne(() => VehicleEntity, (vehicle) => vehicle.documents, { nullable: false, onDelete: 'CASCADE' })
+  // N:1 con vehículo
+  @ManyToOne(() => VehicleEntity, (vehicle) => vehicle.documents, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'vehicleId' })
   vehicle: VehicleEntity;
 
+  // N:1 con tipo documento
   @ManyToOne(() => DocumentTypeEntity, { nullable: false, onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'documentTypeId' })
   document_type: DocumentTypeEntity;
@@ -30,3 +36,4 @@ export class DocumentEntity {
   @Exclude()
   updated_at: Date;
 }
+

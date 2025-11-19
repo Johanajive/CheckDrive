@@ -1,3 +1,4 @@
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { instanceToPlain } from 'class-transformer';
@@ -14,11 +15,12 @@ export class UsersService {
         @InjectRepository(Users)
         private usersRepo: Repository<Users>,
         private readonly logsService: LogsService,
-    ) { }
+    ) {}
 
     /**
-     * findAll: Obtiene todos los usuarios activos del sistema.
-     * @returns Lista de usuarios activos transformados a objetos planos.
+     * @description Obtener todos los usuarios activos del sistema.
+     * @returns Lista de usuarios activos en formato plano.
+     * @throws NotFoundException Cuando no existen usuarios activos.
      */
     async findAll() {
         const users = await this.usersRepo.find({ where: { status: true } });
@@ -26,7 +28,7 @@ export class UsersService {
             throw new NotFoundException('No hay usuarios disponibles');
         }
 
-        //  Registrar log de consulta
+        // Registrar log de consulta
         await this.logsService.create({
             date: new Date(),
             host: 'localhost',
@@ -38,9 +40,10 @@ export class UsersService {
     }
 
     /**
-     * findOne: Busca un usuario por su ID.
-     * @param id { number } - ID del usuario.
-     * @returns { Users } Usuario encontrado.
+     * @description Buscar un usuario por ID.
+     * @param id ID del usuario.
+     * @returns Usuario encontrado.
+     * @throws NotFoundException Si el usuario no existe.
      */
     async findOne(id: number) {
         const userFind = await this.usersRepo.findOne({ where: { id_user: id } });
@@ -58,9 +61,10 @@ export class UsersService {
     }
 
     /**
-     * findName: Busca usuarios cuyo nombre coincida parcialmente.
-     * @param name { string } - Nombre o fragmento de nombre.
-     * @returns { Users[] } Lista de usuarios encontrados.
+     * @description Buscar usuarios cuyo nombre coincida parcial o totalmente.
+     * @param name Nombre o parte del nombre.
+     * @returns Lista de usuarios encontrados.
+     * @throws NotFoundException Si no se encontraron usuarios.
      */
     async findName(name: string) {
         const userFindName = await this.usersRepo.find({
@@ -80,9 +84,10 @@ export class UsersService {
     }
 
     /**
-     * findDocument: Obtiene usuarios por documento de identificación.
-     * @param document { number } - Número del documento.
-     * @returns { Users[] } Lista de usuarios encontrados.
+     * @description Buscar usuario por documento de identificación.
+     * @param document Número del documento.
+     * @returns Lista de usuarios encontrados.
+     * @throws NotFoundException Si no existe un usuario con ese documento.
      */
     async findDocument(document: number) {
         const userFindDocument = await this.usersRepo.find({
@@ -104,9 +109,9 @@ export class UsersService {
     }
 
     /**
-     * create: Crea un nuevo usuario.
-     * @param newUser { CreateUserDTO } - Datos del usuario a registrar.
-     * @returns { Users } Usuario creado.
+     * @description Crear un nuevo usuario.
+     * @param newUser Datos necesarios para crear el usuario.
+     * @returns Usuario creado.
      */
     async create(newUser: CreateUserDTO) {
         const userCreated = this.usersRepo.create(newUser);
@@ -123,10 +128,11 @@ export class UsersService {
     }
 
     /**
-     * update: Actualiza un usuario existente.
-     * @param id { number } - ID del usuario.
-     * @param updateUser { UpdateUserDTO } - Datos actualizados.
-     * @returns { Users } Usuario actualizado.
+     * @description Actualiza un usuario existente.
+     * @param id ID del usuario.
+     * @param updateUser Datos actualizados.
+     * @returns Usuario actualizado.
+     * @throws NotFoundException Si el usuario no existe.
      */
     async update(id: number, updateUser: UpdateUserDTO) {
         const hashedPassword = await bcrypt.hash(updateUser.password, 10);
@@ -144,9 +150,10 @@ export class UsersService {
     }
 
     /**
-     * disabled: Desactiva un usuario (soft delete).
-     * @param id { number } - ID del usuario.
+     * @description Desactivar un usuario (soft delete).
+     * @param id ID del usuario.
      * @returns Mensaje de confirmación y datos del usuario.
+     * @throws NotFoundException Si el usuario no existe.
      */
     async disabled(id: number) {
         const userFind = await this.usersRepo.findOne({ where: { id_user: id } });
@@ -170,3 +177,4 @@ export class UsersService {
         };
     }
 }
+

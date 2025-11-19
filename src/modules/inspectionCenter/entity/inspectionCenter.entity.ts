@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ScheduleInspectionCenterEntity } from "./scheduleInspectionCenter.entity";
+import { Appointments } from "src/modules/appointments/entity/appointments.entity";
 
 @Entity()
 export class InspectionCenterEntity{
@@ -25,4 +26,9 @@ export class InspectionCenterEntity{
     @OneToMany(()=>ScheduleInspectionCenterEntity,(schedule)=>schedule.inspectionCenter,
         {cascade:true})
         schedule:ScheduleInspectionCenterEntity[];
+
+    // 1 -> N Citas
+    @OneToMany(() => Appointments, (appointment) => appointment.center)
+    appointments: Appointments[];
     }
+

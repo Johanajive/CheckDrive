@@ -1,18 +1,29 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-      transformOptions:{ enableImplicitConversion: true }
-    }));
 
-  await app.listen(process.env.PORT ?? 3000);
+  // Pipe global de validación (recomendado)
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+
+  // Opciones de swagger
+  const config = new DocumentBuilder()
+    .setTitle('CheckDrive API')
+    .setDescription('API para users, auth y logs')
+    .setVersion('1.0')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', name: 'Authorization', in: 'header' },
+      'bearerAuth',
+    )
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
+
+  await app.listen(process.env.PORT || 3000);
   console.log(`Application is running on localhost:${process.env.PORT ?? 3000}`);
 }
 bootstrap();

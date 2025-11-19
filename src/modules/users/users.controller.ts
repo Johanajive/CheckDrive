@@ -1,4 +1,6 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, Delete, UseGuards } from '@nestjs/common';
+
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Put, Delete, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody, ApiParam } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
@@ -7,92 +9,105 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { RolesEnum } from 'src/common/enum/roles.enum';
 
-@Controller('users')
+// Agrupa todos los endpoints dentro de la categoría "Users" en Swagger.
+@ApiTags('Users')
+
+// Indica que este controlador requiere autenticación por token Bearer.
+@ApiBearerAuth('bearerAuth')
+
+// Se aplican los guardias de seguridad a todos los endpoints del controlador:
+// - JwtAuthGuard valida el token JWT.
+// - RolesGuard valida el rol del usuario.
 @UseGuards(JwtAuthGuard, RolesGuard)
+
+// Define la ruta base del controlador: /users
+@Controller('users')
 export class UsersController {
-    constructor(private readonly usersService: UsersService) { }
 
-    /**
-     * GET /users
-     * findAll: Obtiene todos los usuarios activos del sistema.
-     * Requiere rol ADMIN.
-     */
-    @Get()
-    @Roles(RolesEnum.ADMIN)
-    findAll() {
-        return this.usersService.findAll();
-    }
+  // Inyección del servicio UsersService para acceder a la lógica de negocio.
+  constructor(private readonly usersService: UsersService) { }
 
-    /**
-     * GET /users/:id
-     * findOne: Consulta un usuario por su ID.
-     * @param id { number } - ID del usuario.
-     * Requiere rol ADMIN.
-     */
-    @Get(':id')
-    @Roles(RolesEnum.ADMIN)
-    findOne(@Param('id', ParseIntPipe) id: number) {
-        return this.usersService.findOne(id);
-    }
+  /**
+   * GET /users
+   * Obtiene todos los usuarios activos.
+   */
+  @Get()
+  @Roles(RolesEnum.ADMIN) // Solo accesible por administradores.
+  @ApiOperation({ summary: 'Obtener todos los usuarios activos' })
+  @ApiResponse({ status: 200, description: 'Lista de usuarios' })
+  findAll() {
+    return this.usersService.findAll();
+  }
 
-    /**
-     * GET /users/name/:name
-     * findName: Busca usuarios por nombre o coincidencia parcial.
-     * @param name { string } - Nombre a buscar.
-     * Requiere rol ADMIN.
-     */
-    @Get('name/:name')
-    @Roles(RolesEnum.ADMIN)
-    findName(@Param('name') name: string) {
-        return this.usersService.findName(name);
-    }
+  /**
+   * GET /users/:id
+   * Obtiene un usuario específico por ID.
+   */
+  @Get(':id')
+  @Roles(RolesEnum.ADMIN)
+  @ApiOperation({ summary: 'Obtener usuario por ID' })
+  @ApiParam({ name: 'id', description: 'ID del usuario' })
+  @ApiResponse({ status: 200, description: 'Usuario encontrado' })
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    // ParseIntPipe asegura que el parámetro ID sea un número.
+    return this.usersService.findOne(id);
+  }
 
-    /**
-     * GET /users/document/:document
-     * findDocument: Busca un usuario por su documento.
-     * @param document { number } - Documento de identificación.
-     * Requiere rol ADMIN.
-     */
-    @Get('document/:document')
-    @Roles(RolesEnum.ADMIN)
-    findDocument(@Param('document') document: number){
-        return this.usersService.findDocument(document)
-    }
+  /**
+   * GET /users/name/:name
+   * Busca usuarios cuyo nombre coincida parcial o completamente.
+   */
+  @Get('name/:name')
+  @Roles(RolesEnum.ADMIN)
+  @ApiOperation({ summary: 'Buscar usuarios por nombre' })
+  findName(@Param('name') name: string) {
+    return this.usersService.findName(name);
+  }
 
-    /**
-     * POST /users
-     * create: Registra un nuevo usuario en el sistema.
-     * @param body { CreateUserDTO } - Datos del usuario a crear.
-     * Requiere rol ADMIN.
-     */
-    @Post()
-    @Roles(RolesEnum.ADMIN)
-    create(@Body() body: CreateUserDTO) {
-        return this.usersService.create(body);
-    }
+  /**
+   * GET /users/document/:document
+   * Busca usuarios por documento de identificación.
+   */
+  @Get('document/:document')
+  @Roles(RolesEnum.ADMIN)
+  @ApiOperation({ summary: 'Buscar usuario por documento' })
+  findDocument(@Param('document') document: number) {
+    return this.usersService.findDocument(document);
+  }
 
-    /**
-     * PUT /users/:id
-     * update: Actualiza los datos de un usuario.
-     * @param id { number } - ID del usuario.
-     * @param body { UpdateUserDTO } - Datos actualizados.
-     * Requiere rol ADMIN.
-     */
-    @Put(':id')
-    @Roles(RolesEnum.ADMIN)
-    update(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateUserDTO) {
-        return this.usersService.update(id, body)
-    }
+  /**
+   * POST /users
+   * Crea un nuevo usuario en el sistema.
+   */
+  @Post()
+  @Roles(RolesEnum.ADMIN)
+  @ApiOperation({ summary: 'Crear un nuevo usuario' })
+  @ApiBody({ type: CreateUserDTO }) // Define el modelo esperado en Swagger.
+  create(@Body() body: CreateUserDTO) {
+    return this.usersService.create(body);
+  }
 
-    /**
-     * DELETE /users/:id
-     * disabled: Desactiva un usuario (soft delete).
-     * @param id { number } - ID del usuario.
-     * Requiere rol ADMIN.
-     */
-    @Delete(':id')
-    @Roles(RolesEnum.ADMIN)
-    disabled(@Param('id', ParseIntPipe) id: number) {
-        return this.usersService.disabled(id);
-    }
+  /**
+   * PUT /users/:id
+   * Actualiza la información de un usuario existente.
+   */
+  @Put(':id')
+  @Roles(RolesEnum.ADMIN)
+  @ApiOperation({ summary: 'Actualizar usuario' })
+  @ApiBody({ type: UpdateUserDTO })
+  update(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateUserDTO) {
+    return this.usersService.update(id, body);
+  }
+
+  /**
+   * DELETE /users/:id
+   * Desactiva (soft delete) un usuario sin eliminarlo físicamente.
+   */
+  @Delete(':id')
+  @Roles(RolesEnum.ADMIN)
+  @ApiOperation({ summary: 'Desactivar usuario' })
+  disabled(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.disabled(id);
+  }
 }
+
