@@ -1,0 +1,315 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-11-13T22:30:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2024.5.0",
+  "resources": [
+    {
+      "_id": "wrk_checkdrive",
+      "_type": "workspace",
+      "parentId": null,
+      "name": "CheckDrive - Vehicles Documents",
+      "description": "API para gestionar vehículos, documentos y tipos de documentos",
+      "scope": null
+    },
+    {
+      "_id": "env_checkdrive",
+      "_type": "environment",
+      "parentId": "wrk_checkdrive",
+      "name": "Development",
+      "data": {
+        "base_url": "http://localhost:3000",
+        "api_path": "/vehicles-documents"
+      },
+      "dataPropertyOrder": {
+        "&": [
+          "base_url",
+          "api_path"
+        ]
+      },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1699900000000
+    },
+    {
+      "_id": "fld_vehicles",
+      "_type": "request_group",
+      "parentId": "wrk_checkdrive",
+      "name": "Vehicles",
+      "description": "Endpoints para gestionar vehículos",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 1
+    },
+    {
+      "_id": "req_get_all_vehicles",
+      "_type": "request",
+      "parentId": "fld_vehicles",
+      "name": "GET - Obtener todos los vehículos",
+      "url": "{{ base_url }}{{ api_path }}/vehicles",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": 1,
+      "isPrivate": false,
+      "settingStoreLogs": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "description": "Obtiene todos los vehículos sin información de documentos"
+    },
+    {
+      "_id": "req_get_all_vehicles_with_docs",
+      "_type": "request",
+      "parentId": "fld_vehicles",
+      "name": "GET - Obtener todos los vehículos CON documentos",
+      "url": "{{ base_url }}{{ api_path }}/vehicles/with-documents",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": 2,
+      "isPrivate": false,
+      "settingStoreLogs": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "description": "Obtiene todos los vehículos con sus documentos asociados"
+    },
+    {
+      "_id": "req_get_vehicle_by_plate",
+      "_type": "request",
+      "parentId": "fld_vehicles",
+      "name": "GET - Obtener vehículo por placa CON documentos",
+      "url": "{{ base_url }}{{ api_path }}/vehicles/ABC123",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": 3,
+      "isPrivate": false,
+      "settingStoreLogs": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "description": "Obtiene un vehículo específico por su placa con todos sus documentos. Reemplaza ABC123 por la placa deseada."
+    },
+    {
+      "_id": "req_create_vehicle",
+      "_type": "request",
+      "parentId": "fld_vehicles",
+      "name": "POST - Crear vehículo",
+      "url": "{{ base_url }}{{ api_path }}/vehicles",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"plate\": \"ABC123\",\n  \"brand\": \"Toyota\",\n  \"model\": \"Corolla\",\n  \"type\": \"Sedan\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 4,
+      "isPrivate": false,
+      "settingStoreLogs": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "description": "Crea un nuevo vehículo. La placa debe ser alfanumérica mayúscula sin caracteres especiales."
+    },
+    {
+      "_id": "req_update_vehicle",
+      "_type": "request",
+      "parentId": "fld_vehicles",
+      "name": "PATCH - Actualizar vehículo por placa",
+      "url": "{{ base_url }}{{ api_path }}/vehicles/ABC123",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"brand\": \"Honda\",\n  \"model\": \"Civic\",\n  \"type\": \"Sedan\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 5,
+      "isPrivate": false,
+      "settingStoreLogs": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "description": "Actualiza un vehículo. NOTA: La placa NO puede ser modificada. Solo se pueden actualizar brand, model y type."
+    },
+    {
+      "_id": "fld_documents",
+      "_type": "request_group",
+      "parentId": "wrk_checkdrive",
+      "name": "Documents",
+      "description": "Endpoints para gestionar documentos de vehículos",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 2
+    },
+    {
+      "_id": "req_create_document",
+      "_type": "request",
+      "parentId": "fld_documents",
+      "name": "POST - Crear documento para vehículo",
+      "url": "{{ base_url }}{{ api_path }}/documents",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"start_date\": \"2025-01-01\",\n  \"end_date\": \"2025-12-31\",\n  \"vehicle_id\": 1,\n  \"document_type_id\": 1\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1,
+      "isPrivate": false,
+      "settingStoreLogs": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "description": "Crea un nuevo documento para un vehículo. Las fechas deben ser en formato ISO (YYYY-MM-DD). start_date debe ser menor a end_date."
+    },
+    {
+      "_id": "req_get_documents_by_vehicle",
+      "_type": "request",
+      "parentId": "fld_documents",
+      "name": "GET - Obtener documentos de vehículo por placa",
+      "url": "{{ base_url }}{{ api_path }}/documents/ABC123",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": 2,
+      "isPrivate": false,
+      "settingStoreLogs": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "description": "Obtiene todos los documentos asociados a un vehículo identificado por su placa. Reemplaza ABC123 por la placa deseada."
+    },
+    {
+      "_id": "fld_document_types",
+      "_type": "request_group",
+      "parentId": "wrk_checkdrive",
+      "name": "Document Types",
+      "description": "Endpoints para gestionar tipos de documentos",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 3
+    },
+    {
+      "_id": "req_get_document_types",
+      "_type": "request",
+      "parentId": "fld_document_types",
+      "name": "GET - Obtener todos los tipos de documentos",
+      "url": "{{ base_url }}{{ api_path }}/document-types",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": 1,
+      "isPrivate": false,
+      "settingStoreLogs": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "description": "Obtiene todos los tipos de documentos disponibles y activos"
+    },
+    {
+      "_id": "req_create_document_type",
+      "_type": "request",
+      "parentId": "fld_document_types",
+      "name": "POST - Crear tipo de documento",
+      "url": "{{ base_url }}{{ api_path }}/document-types",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"SOAT\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 2,
+      "isPrivate": false,
+      "settingStoreLogs": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "description": "Crea un nuevo tipo de documento. Los nombres deben ser únicos."
+    },
+    {
+      "_id": "req_update_document_type",
+      "_type": "request",
+      "parentId": "fld_document_types",
+      "name": "PATCH - Actualizar tipo de documento",
+      "url": "{{ base_url }}{{ api_path }}/document-types/1",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Seguro Obligatorio de Accidentes de Tránsito\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 3,
+      "isPrivate": false,
+      "settingStoreLogs": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "description": "Actualiza el nombre de un tipo de documento. NO se puede eliminar tipos de documentos."
+    }
+  ]
+}

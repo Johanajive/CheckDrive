@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
+import { JwtModuleOptions } from '@nestjs/jwt';
 import { Users } from '../users/entity/user.entity'; 
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';

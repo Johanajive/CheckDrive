@@ -8,6 +8,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { InspectionCenterModule } from './modules/inspectionCenter/inspectionCenter.module';
 import { LogsModule } from './modules/logs/logs.module'; 
 import { AppointmentsModule } from './modules/appointments/appointments.module'; 
+import { VehiclesDocumentsModule } from './modules/vehicles-documents/vehicles-documents.module';
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }),
@@ -31,6 +32,7 @@ import { AppointmentsModule } from './modules/appointments/appointments.module';
     InspectionCenterModule,
     LogsModule,
     AppointmentsModule,
+    VehiclesDocumentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
