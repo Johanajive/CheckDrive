@@ -25,11 +25,28 @@ export class InspectionCenterService {
     //  SERVICIOS MÓDULO CENTRO DE REVISIÓN
     // ===============================================================
 
-    findAllActiveCenters() {
+    async findAllActiveCenters() {
+
+        // Guardar log
+        await this.logsService.create({
+            date: new Date(),
+            host: 'localhost',
+            service: 'InspectionCenterService',
+            content: `Se consultaron todos los centros de revisión activos`
+        });
+
         return this.inspectionCenterRepo.find({ where: { status: true } });
     }
 
-    findAllCenters() {
+    async findAllCenters() {
+
+        // Guardar log
+        await this.logsService.create({
+            date: new Date(),
+            host: 'localhost',
+            service: 'InspectionCenterService',
+            content: `Se consultaron todos los centros de revisión activos e inactivos`
+        });
         return this.inspectionCenterRepo.find();
     }
 
@@ -41,6 +58,14 @@ export class InspectionCenterService {
 
         if(centerExist.status===false)throw new BadRequestException("El centro de revisión no se encuentra activo")
         
+        // Guardar log
+        await this.logsService.create({
+            date: new Date(),
+            host: 'localhost',
+            service: 'InspectionCenterService',
+            content: `Se consultó por id el centro de revisión: ${centerExist.name}`
+        });
+
         return centerExist;
     }
 
@@ -54,6 +79,15 @@ export class InspectionCenterService {
         if(!centerExist) throw new NotFoundException("El centro de revisión no se encuentra registrado");
         
         if(centerExist.status===false)throw new BadRequestException("El centro de revisión no se encuentra activo")
+        
+        // Guardar log
+        await this.logsService.create({
+            date: new Date(),
+            host: 'localhost',
+            service: 'InspectionCenterService',
+            content: `Se consultó por nombre el centro de revisión: ${centerExist.name}`
+        });
+
         return centerExist;
     }
 
@@ -68,6 +102,14 @@ export class InspectionCenterService {
     
         if(activeCenters.length === 0)throw new NotFoundException(`No se encuentran centros de revisión activos en la ciudad ${city}`)
         
+        // Guardar log
+        await this.logsService.create({
+            date: new Date(),
+            host: 'localhost',
+            service: 'InspectionCenterService',
+            content: `Se consultaron los centros de revisión de la ciudad: ${city}`
+        });
+
         return activeCenters;
     }
 
@@ -169,10 +211,14 @@ export class InspectionCenterService {
         //Encontrar todos los horarios relacionados al nombre del centro de revision consultado
         const activeSchedules=schedulesCenter.schedule.filter((schedule)=> schedule.status===true);
         
+        // Guardar log
+        await this.logsService.create({
+            date: new Date(),
+            host: 'localhost',
+            service: 'InspectionCenterService',
+            content: `Se consultaron los horarios activos del centro de revisión ${schedulesCenter.name}`
+        });
 
-        //Validar la existencia de algún horario para el centro de revisión seleccionado
-        if(!activeSchedules.length) throw new NotFoundException("El centro de revisión no tiene horarios activos registrados");        
-           
         return{
             message: `El centro de revisión ${schedulesCenter.name} tiene los siguientes horarios registrados`,
             schedules: activeSchedules
@@ -199,6 +245,14 @@ export class InspectionCenterService {
         if (!schedulesCenter.schedule || schedulesCenter.schedule.length === 0)throw new NotFoundException(`El centro de revisión ${schedulesCenter.name} no tiene horarios registrados`);
         
         const activeSchedules = schedulesCenter.schedule.filter((schedule) => schedule.status === true);
+
+        // Guardar log
+        await this.logsService.create({
+            date: new Date(),
+            host: 'localhost',
+            service: 'InspectionCenterService',
+            content: `Se consultaron todos los horarios del centro de revisión ${schedulesCenter.name}`
+        });
 
         return {
             message: `El centro de revisión ${schedulesCenter.name} tiene los siguientes horarios registrados`,
@@ -229,7 +283,6 @@ export class InspectionCenterService {
             `El centro de revisión ${centerExist.name} no tiene horarios registrados`
         );
         
-        
         //Encontrar todos los horarios relacionados al nombre del centro de revision consultado
         const schedulesByDay=  centerExist?.schedule.filter(
             (schedule)=> schedule.day.toLowerCase()===day.toLowerCase() && schedule.status===true
@@ -237,6 +290,15 @@ export class InspectionCenterService {
 
         //Validar la existencia de algún horario para el centro de revisión en el día seleccionado
         if(!schedulesByDay.length) throw new NotFoundException(`El centro de revisión no tiene horarios activos registrados para el día ${day}`);
+        
+        // Guardar log
+        await this.logsService.create({
+            date: new Date(),
+            host: 'localhost',
+            service: 'InspectionCenterService',
+            content: `Se consultaron los horarios activos del centro de revisión ${centerExist.name} para el día ${day}`
+        });
+
         return {
             message: `El centro de revisión ${centerExist.name} tiene los siguientes horarios registrados`,
             schedules: schedulesByDay
@@ -273,6 +335,14 @@ export class InspectionCenterService {
        //Validar la existencia de algún horario para el centro de revisión en el día seleccionado
         if(!schedulesByDay?.length) throw new NotFoundException(`El centro de revisión no tiene horarios registrados para el día ${day}`);
 
+         // Guardar log
+        await this.logsService.create({
+            date: new Date(),
+            host: 'localhost',
+            service: 'InspectionCenterService',
+            content: `Se consultaron todos los horarios del centro de revisión ${centerExist.name} para el día ${day}`
+        });
+
         return {
             message: `El centro de revisión ${centerExist?.name} tiene los siguientes horarios registrados para el día ${day}`,
             schedules: schedulesByDay
@@ -289,7 +359,7 @@ export class InspectionCenterService {
                 inspectionCenter: { id_center: centerId }
             }}
         );
-        if(existingSchedule)throw new BadRequestException(`El horario para el día ${newSchedule.day} para centro de revisión ya se encuentra registrado`)
+        if(existingSchedule)throw new BadRequestException(`El horario para el día ${newSchedule.day} para el centro de revisión ya se encuentra registrado`)
 
         //Validar la existencia del centro de revisión
         const centerExist= await this.inspectionCenterRepo.findOne({
@@ -304,8 +374,17 @@ export class InspectionCenterService {
             inspectionCenter:{id_center:centerId}
         });
         await this.scheduleInspectionCenterRepo.save(schedule);
+
+        // Guardar log
+        await this.logsService.create({
+            date: new Date(),
+            host: 'localhost',
+            service: 'InspectionCenterService',
+            content: `Se creo un horario para el centro de revisión: ${centerExist.name}`
+        });
+
         return{
-            message:`El horario para el centro de revisión ${centerExist.name} ha sido creado correctamente`, 
+            message:`El horario para el centro de revisión Nº ${centerId} ha sido creado correctamente`, 
         } 
     }
 
@@ -323,6 +402,14 @@ export class InspectionCenterService {
         );
         if(updatedSchedule.affected===0) throw new ConflictException("No se pudo actualizar el horario seleccionado")
     
+        // Guardar log
+        await this.logsService.create({
+            date: new Date(),
+            host: 'localhost',
+            service: 'InspectionCenterService',
+            content: `Se actualizó el horario para el día ${scheduleExist.day}`
+        });
+
         return{
             message:"El horario ha sido actualizado correctamente"
         }
@@ -338,6 +425,14 @@ export class InspectionCenterService {
         const inactivatedSchedule =await this.scheduleInspectionCenterRepo.update(id, {status:false});
         //Validar la correcta inactivación del horario del centro de revisión seleccionado
         if(!inactivatedSchedule.affected) throw new ConflictException("No se pudo inactivar el horario del centro de revisión"); 
+
+        // Guardar log
+        await this.logsService.create({
+            date: new Date(),
+            host: 'localhost',
+            service: 'InspectionCenterService',
+            content: `Se inactivó el horario para el día ${scheduleExist.day}`
+        });
 
         return{
             message:`El horario del centro de revisión para el día ${scheduleExist.day} se inactivo correctamente`

@@ -100,7 +100,7 @@ describe ('InspectionCenterService', ()=>{
     }); 
 
     // ===============================================================
-    //  PRUEBAS MÓDULO CENTRO DE REVISIÓN
+    //  PRUEBAS SERVICIOS MÓDULO CENTRO DE REVISIÓN
     // ===============================================================
 
     //Prueba unitaria del servicio findAllActiveCenters
@@ -109,6 +109,18 @@ describe ('InspectionCenterService', ()=>{
 
         expect (inspectionCenters.length).toBeGreaterThan(0); 
         expect(fakeRepository.find).toHaveBeenCalled();
+
+        const newLog={
+            id:1, 
+            date:2025/11/16, 
+            host:"localhost", 
+            service:"InspectionCenterService", 
+            content:"Se consultaron todos los centros de revisión activos"
+        }
+        fakeLogsRepository.save.mockResolvedValue(newLog); 
+        const resultLog=await logsService.create(newLog as any); 
+
+        expect(resultLog.id_log).toEqual(4);
     });
 
     //Prueba unitaria del servicio findAllCenters
@@ -117,6 +129,18 @@ describe ('InspectionCenterService', ()=>{
 
         expect (inspectionCenters.length).toBeGreaterThan(0); 
         expect(fakeRepository.find).toHaveBeenCalled();
+
+        const newLog={
+            id:2, 
+            date:2025/11/16, 
+            host:"localhost", 
+            service:"InspectionCenterService", 
+            content:"Se consultaron todos los centros de revisión activos e inactivos"
+        }
+        fakeLogsRepository.save.mockResolvedValue(newLog); 
+        const resultLog=await logsService.create(newLog as any); 
+
+        expect(resultLog.id_log).toEqual(4);
     });
 
     //Prueba unitaria del servicio findOneCenterById
@@ -125,6 +149,18 @@ describe ('InspectionCenterService', ()=>{
         const inspectionCenterFind=await service.findOneCenterById(1); 
 
         expect(inspectionCenterFind.name).toEqual("Centro Carros");
+
+        const newLog={
+            id:2, 
+            date:2025/11/16, 
+            host:"localhost", 
+            service:"InspectionCenterService", 
+            content:"Se consultó por id el centro de revisión: Centro Carros"
+        }
+        fakeLogsRepository.save.mockResolvedValue(newLog); 
+        const resultLog=await logsService.create(newLog as any); 
+
+        expect(resultLog.id_log).toEqual(4);
     });
     // Prueba unitaria de la excepción NotFoundExcepción cuando el centro de revisión no se encuentra registrado
     it("Deberia retornar un NotFoundExcepcion cuando el centro de revisión no se encuentra registrado", async()=>{
@@ -143,6 +179,18 @@ describe ('InspectionCenterService', ()=>{
         const inspectionCenterFind=await service.findOneCenterByName("SOAT SAS"); 
 
         expect(inspectionCenterFind.address).toEqual("Calle 78 #10-85");
+
+        const newLog={
+            id:2, 
+            date:2025/11/16, 
+            host:"localhost", 
+            service:"InspectionCenterService", 
+            content:"Se consultó por nombre el centro de revisión: SOAT SAS"
+        }
+        fakeLogsRepository.save.mockResolvedValue(newLog); 
+        const resultLog=await logsService.create(newLog as any); 
+
+        expect(resultLog.id_log).toEqual(4);
     });
 
     //Prueba unitaria del servicio findCentersByCity
@@ -158,6 +206,18 @@ describe ('InspectionCenterService', ()=>{
             {id:1, name:"Centro Carros", city:"Bogotá", address:"Calle 48 #89-89", phone:"555-12345", status:true }, 
             {id:2, name:"SOAT SAS", city:"Bogotá", address:"Calle 78 #10-85", phone:"555-12895", status:true }
         ]);
+
+        const newLog={
+            id:2, 
+            date:2025/11/16, 
+            host:"localhost", 
+            service:"InspectionCenterService", 
+            content:"Se consultaron los centros de revisión de la ciudad: bogotá"
+        }
+        fakeLogsRepository.save.mockResolvedValue(newLog); 
+        const resultLog=await logsService.create(newLog as any); 
+
+        expect(resultLog.id_log).toEqual(4);
     })
     // Prueba unitaria de la excepción NotFoundExcepción cuando no se encuentran centros de revisión activos en la ciudad
     it("Deberia retornar un BadRequestExcepcion cuando no se encuentran centros de revisión activos en la ciudad", async()=>{
@@ -180,7 +240,13 @@ describe ('InspectionCenterService', ()=>{
 
         expect(result.message).toEqual("El centro de revisión ha sido creado correctamente");
 
-        const newLog={id:1, date:2025/11/16, host:"localhost", service:"InspectionCenterService", content:"Se creó un nuevo centro de revisión: Centro Arreglo Autos"}
+        const newLog={
+            id:1, 
+            date:2025/11/16, 
+            host:"localhost", 
+            service:"InspectionCenterService", 
+            content:"Se creó un nuevo centro de revisión: Centro Arreglo Autos"
+        }
         fakeLogsRepository.save.mockResolvedValue(newLog); 
         const resultLog=await logsService.create(newLog as any); 
 
@@ -194,7 +260,6 @@ describe ('InspectionCenterService', ()=>{
         await expect(service.createInspectionCenter(newInspectionCenter as any)).rejects.toThrow(BadRequestException);
     })
 
-
     //Prueba unitaria del servicio updateInspectionCenter
     it("Deberia permitir la actualización de un centro de revisión", async()=>{
         const updatedInspectionCenter={city:"Cali"}
@@ -206,7 +271,13 @@ describe ('InspectionCenterService', ()=>{
         expect(fakeRepository.update).toHaveBeenCalledWith(1, {city:"Cali"});
         expect(result.message).toEqual("El centro de revisión se actualizo correctamente")
         
-        const newLog={id:2, date:2025/11/17, host:"localhost", service:"InspectionCenterService", content:"Centro de revisión actualizado: Centro Arreglo Autos"}
+        const newLog={
+            id:2, 
+            date:2025/11/17, 
+            host:"localhost", 
+            service:"InspectionCenterService", 
+            content:"Centro de revisión actualizado: Centro Arreglo Autos"
+        }
         fakeLogsRepository.save.mockResolvedValue(newLog); 
         const resultLog=await logsService.create(newLog as any); 
 
@@ -233,7 +304,13 @@ describe ('InspectionCenterService', ()=>{
         expect(fakeRepository.update).toHaveBeenCalledWith(1, {status:false});
         expect(result.message).toEqual("El centro de revisión ha sido inactivado correctamente");
 
-        const newLog={id:1, date:2025/11/17, host:"localhost", service:"InspectionCenterService", content:"Centro de revisión inactivado: Centro Carros"}
+        const newLog={
+            id:1, 
+            date:2025/11/17,
+            host:"localhost", 
+            service:"InspectionCenterService", 
+            content:"Centro de revisión inactivado: Centro Carros"
+        }
         fakeLogsRepository.save.mockResolvedValue(newLog); 
         const resultLog=await logsService.create(newLog as any); 
 
@@ -252,7 +329,7 @@ describe ('InspectionCenterService', ()=>{
     })
 
     // ===============================================================
-    //  PRUEBAS MÓDULO HORARIOS
+    //  PRUEBAS SERVICIOS MÓDULO HORARIOS
     // ===============================================================
 
     //Prueba unitaria del servicio findActiveSchedulesByCenterName
@@ -264,7 +341,19 @@ describe ('InspectionCenterService', ()=>{
         expect(result.schedules).toEqual([
             {id:2,  day:"Miércoles", opening_time:"08:00" ,closing_time:"19:00" , status: true}, 
             {id:3,  day:"Domingo", opening_time:"10:00" ,closing_time:"15:00" , status: true}
-        ])
+        ]);
+
+        const newLog={
+            id:2, 
+            date:2025/11/16, 
+            host:"localhost", 
+            service:"InspectionCenterService", 
+            content:"Se consultaron los horarios activos del centro de revisión Centro Carros"
+        }
+        fakeLogsRepository.save.mockResolvedValue(newLog); 
+        const resultLog=await logsService.create(newLog as any); 
+
+        expect(resultLog.id_log).toEqual(4);
     })
     //Prueba unitaria de la excepción NotFoundException cuando el centro de revisión no tiene horarios activos registrados
     it("Deberia retornar un NotFoundExcepcion cuando el centro de revisión no tiene horarios activos registrados", async()=>{
@@ -282,7 +371,19 @@ describe ('InspectionCenterService', ()=>{
             {id:1,  day:"Lunes", opening_time:"08:00" ,closing_time:"19:00" , status: false}, 
             {id:2,  day:"Miércoles", opening_time:"08:00" ,closing_time:"19:00" , status: true}, 
             {id:3,  day:"Domingo", opening_time:"10:00" ,closing_time:"15:00" , status: true}
-        ])
+        ]);
+
+        const newLog={
+            id:2, 
+            date:2025/11/16, 
+            host:"localhost", 
+            service:"InspectionCenterService", 
+            content:"Se consultaron todos los horarios del centro de revisión Centro Carros"
+        }
+        fakeLogsRepository.save.mockResolvedValue(newLog); 
+        const resultLog=await logsService.create(newLog as any); 
+
+        expect(resultLog.id_log).toEqual(4);
     })
     //Prueba unitaria de la excepción NotFoundException cuando el centro de revisión no tiene horarios registrados
     it("Deberia retornar un NotFoundExcepcion cuando el centro de revisión no tiene horarios registrados", async()=>{
@@ -298,7 +399,19 @@ describe ('InspectionCenterService', ()=>{
         expect(result.message).toEqual("El centro de revisión Centro Carros tiene los siguientes horarios registrados");
         expect(result.schedules).toEqual([
             {id:3,  day:"Domingo", opening_time:"10:00" ,closing_time:"15:00" , status: true}
-        ])
+        ]);
+
+        const newLog={
+            id:2, 
+            date:2025/11/16, 
+            host:"localhost", 
+            service:"InspectionCenterService", 
+            content:"Se consultaron los horarios activos del centro de revisión Centro Carros para el día domingo"
+        }
+        fakeLogsRepository.save.mockResolvedValue(newLog); 
+        const resultLog=await logsService.create(newLog as any); 
+
+        expect(resultLog.id_log).toEqual(4);
     })
     //Prueba unitaria de la excepción NotFoundException cuando el centro de revisión no tiene horarios activos registrados para el día seleccionado
     it("Deberia retornar un NotFoundExcepcion cuando el centro de revisión no tiene horarios activos registrados para el día seleccionado", async()=>{
@@ -315,6 +428,17 @@ describe ('InspectionCenterService', ()=>{
         expect(result.schedules).toEqual([
             {id:1,  day:"Lunes", opening_time:"08:00" ,closing_time:"19:00" , status: false},
         ])
+
+        const newLog={
+            id:2, 
+            date:2025/11/16, 
+            host:"localhost", 
+            service:"InspectionCenterService", 
+            content:"Se consultaron todos los horarios del centro de revisión Centro Carros para el día lunes"
+        }
+        fakeLogsRepository.save.mockResolvedValue(newLog); 
+        const resultLog=await logsService.create(newLog as any); 
+        expect(resultLog.id_log).toEqual(4);
     })
     //Prueba unitaria de la excepción NotFoundException cuando el centro de revisión no tiene horarios registrados para el día seleccionado
     it("Deberia retornar un NotFoundExcepcion cuando el centro de revisión no tiene horarios registrados para el día seleccionado", async()=>{
@@ -332,6 +456,17 @@ describe ('InspectionCenterService', ()=>{
         const result =await service.createScheduleCenter(1, newSchedule as any);
 
         expect(result.message).toEqual("El horario para el centro de revisión Nº 1 ha sido creado correctamente");
+        
+        const newLog={
+            id:2, 
+            date:2025/11/16, 
+            host:"localhost", 
+            service:"InspectionCenterService", 
+            content:"Se creo un horario para el centro de revisión: Centro Carros"
+        }
+        fakeLogsRepository.save.mockResolvedValue(newLog); 
+        const resultLog=await logsService.create(newLog as any); 
+        expect(resultLog.id_log).toEqual(4);
     })
     //Prueba unitaria de la excepción BadRequestException cuando el horario para el día seleccionado para centro de revisión ya se encuentra registrado
     it("Deberia retornar un BadRequestExcepcion cuando el horario para el día seleccionado para centro de revisión ya se encuentra registrado", async()=>{
@@ -350,6 +485,17 @@ describe ('InspectionCenterService', ()=>{
         const result=await service.updateScheduleCenter(5, {opening_time:"07:00"});
 
         expect(result.message).toEqual("El horario ha sido actualizado correctamente");
+
+        const newLog={
+            id:2, 
+            date:2025/11/16, 
+            host:"localhost", 
+            service:"InspectionCenterService", 
+            content:"Se actualizó el horario para el día Viernes"
+        }
+        fakeLogsRepository.save.mockResolvedValue(newLog); 
+        const resultLog=await logsService.create(newLog as any); 
+        expect(resultLog.id_log).toEqual(4);
 
     })
     //Prueba unitaria de la excepción ConflictException del servicio updateScheduleCenter
@@ -372,6 +518,17 @@ describe ('InspectionCenterService', ()=>{
 
         expect(fakeSchedulesRepository.update).toHaveBeenCalledWith(6, {status:false});
         expect(result.message).toEqual("El horario del centro de revisión para el día Jueves se inactivo correctamente")
+        
+        const newLog={
+            id:2, 
+            date:2025/11/16, 
+            host:"localhost", 
+            service:"InspectionCenterService", 
+            content:"Se inactivó el horario para el día Jueves"
+        }
+        fakeLogsRepository.save.mockResolvedValue(newLog); 
+        const resultLog=await logsService.create(newLog as any); 
+        expect(resultLog.id_log).toEqual(4);
     })
     //Prueba unitaria de la excepción ConflictException del servicio inactivatedScheduleCenter
     it("Deberia retornar un ConflictException cuando no se pudo inactivar el horario seleccionado del centro de revisión", async()=>{
