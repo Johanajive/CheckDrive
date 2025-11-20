@@ -15,7 +15,7 @@ export class UsersService {
         @InjectRepository(Users)
         private usersRepo: Repository<Users>,
         private readonly logsService: LogsService,
-    ) {}
+    ) { }
 
     /**
      * @description Obtener todos los usuarios activos del sistema.
@@ -113,7 +113,12 @@ export class UsersService {
      * @param newUser Datos necesarios para crear el usuario.
      * @returns Usuario creado.
      */
+
     async create(newUser: CreateUserDTO) {
+        // Encriptar contraseña antes de crear el usuario
+        const hashedPassword = await bcrypt.hash(newUser.password, 10);
+        newUser.password = hashedPassword;
+
         const userCreated = this.usersRepo.create(newUser);
         const savedUser = await this.usersRepo.save(userCreated);
 
