@@ -9,7 +9,7 @@ import { RolesEnum } from "src/common/enum/roles.enum";
 import { UpdateScheduleDTO } from "./dto/update-schedule.dto";
 import { CreateScheduleDTO } from "./dto/create-schedule.dto";
 
-@Controller('inspectionCenter')
+@Controller('/api/inspectionCenter')
 //Todos los endpoints requieren el uso del Token JWT generado en la autenticación del usuario
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class InspectionCenterController{

@@ -2,7 +2,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn, Index, OneToOne } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { DocumentEntity } from './document.entity';
-import { Appointments } from 'src/modules/appointments/entity/appointments.entity';
+import { Appointments } from '../../appointments/entity/appointments.entity';
 
 @Entity()
 @Index(['plate'], { unique: true })
@@ -21,6 +21,9 @@ export class VehicleEntity {
 
   @Column({ nullable: false })
   type: string;
+
+  @Column({ nullable: false })
+  engine_displacement : number;
 
   @Column({ nullable: false, default: true })
   @Exclude()

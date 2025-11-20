@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ScheduleInspectionCenterEntity } from "./scheduleInspectionCenter.entity";
-import { Appointments } from "src/modules/appointments/entity/appointments.entity";
+import { Appointments } from '../../appointments/entity/appointments.entity';
 
 @Entity()
 export class InspectionCenterEntity{

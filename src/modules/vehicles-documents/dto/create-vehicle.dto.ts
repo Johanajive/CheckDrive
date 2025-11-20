@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 
 export class CreateVehicleDto {
   @IsNotEmpty()
@@ -21,4 +21,8 @@ export class CreateVehicleDto {
   @IsNotEmpty()
   @IsString()
   type: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  engine_displacement: number;
 }

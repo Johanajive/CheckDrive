@@ -9,6 +9,7 @@ import { InspectionCenterModule } from './modules/inspectionCenter/inspectionCen
 import { LogsModule } from './modules/logs/logs.module'; 
 import { AppointmentsModule } from './modules/appointments/appointments.module'; 
 import { VehiclesDocumentsModule } from './modules/vehicles-documents/vehicles-documents.module';
+import { PaymentsModule } from './modules/payments/payments.module';
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }),
@@ -23,8 +24,8 @@ import { VehiclesDocumentsModule } from './modules/vehicles-documents/vehicles-d
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_NAME'),
         autoLoadEntities: true,
-        synchronize: true,
-        dropSchema: true,
+        synchronize: false,
+        // dropSchema: true,
       })
     }),
     UsersModule,
@@ -33,6 +34,7 @@ import { VehiclesDocumentsModule } from './modules/vehicles-documents/vehicles-d
     LogsModule,
     AppointmentsModule,
     VehiclesDocumentsModule,
+    PaymentsModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -14,7 +14,7 @@ import { CreateDocumentDto } from './dto/create-document.dto';
 import { CreateDocumentTypeDto } from './dto/create-document-type.dto';
 import { UpdateDocumentTypeDto } from './dto/update-document-type.dto';
 
-@Controller('vehicles-documents')
+@Controller('/api/vehicles-documents')
 export class VehiclesDocumentsController {
   constructor(private readonly service: VehiclesDocumentsService) {}
 
