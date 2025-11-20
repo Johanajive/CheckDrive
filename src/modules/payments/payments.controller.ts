@@ -1,9 +1,14 @@
-import { Controller, Param,Get, ParseIntPipe, Post, Body, Put } from '@nestjs/common';
+import { Controller, Param,Get, ParseIntPipe, Post, Body, Put, UseGuards } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { CreatePaymentDto } from './dto/create-payments.dto';
 import { UpdateProductDTO } from './dto/update-payments.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { JwtAuthGuard } from "../auth/jwt.guard";
+import { RolesGuard } from "../auth/roles.guard";
+import { Roles } from "../auth/roles.decorator";
+import { RolesEnum } from "../../common/enum/roles.enum";
 
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('/api/payments')
 export class PaymentsController {
 
@@ -16,6 +21,7 @@ export class PaymentsController {
     @Get()
     @ApiOperation({ summary: 'Obtiene todos los pagos' })
     @ApiResponse({ status: 200, description: 'Lista de pagos obtenida correctamente.' })
+    @Roles(RolesEnum.ADMIN)
     findAll(){
         return this.paymentsService.findAll();
     }
@@ -30,6 +36,7 @@ export class PaymentsController {
     @ApiOperation({ summary: 'Obtiene un pago por su ID' })
     @ApiResponse({ status: 200, description: 'Pago encontrado correctamente.' })
     @ApiResponse({ status: 404, description: 'Pago no encontrado.' })
+    @Roles(RolesEnum.ADMIN)
     oneProduct(@Param('id', ParseIntPipe) id:number){
         return this.paymentsService.findOne(id);
     }
@@ -45,6 +52,7 @@ export class PaymentsController {
     @ApiOperation({ summary: 'Crea un nuevo pago' })
     @ApiResponse({ status: 201, description: 'Pago creado correctamente.' })
     @ApiResponse({ status: 401, description: 'No autorizado.' })
+    @Roles(RolesEnum.ADMIN)
     createPay(@Body() body:CreatePaymentDto){
         return this.paymentsService.createPay(body);
     }
@@ -59,9 +67,10 @@ export class PaymentsController {
     @ApiOperation({ summary: 'Actualiza un pago existente' })
     @ApiResponse({ status: 200, description: 'Pago actualizado correctamente.' })
     @ApiResponse({ status: 404, description: 'Pago no encontrado.' })
+    @Roles(RolesEnum.ADMIN)
     updatePay(@Param('id', ParseIntPipe) id:number, @Body() body:UpdateProductDTO){
         return this.paymentsService.updatePay(id, body);
     }
     
-    
+
 }
