@@ -1,7 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerCustomOptions, SwaggerModule } from '@nestjs/swagger';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
@@ -29,7 +29,21 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+
+  const customOptions: SwaggerCustomOptions = {
+    swaggerOptions: {
+      url: '/api-json'
+    },
+    customCssUrl: [
+      'https://unpkg.com/swagger-ui-dist@5.10.3/swagger-ui.css',
+    ],
+    customJs: [
+      'https://unpkg.com/swagger-ui-dist@5.10.3/swagger-ui-bundle.js',
+      'https://unpkg.com/swagger-ui-dist@5.10.3/swagger-ui-standalone-preset.js',
+    ]
+  }
+
+  SwaggerModule.setup('api/docs', app, document, customOptions);
 
   await app.listen(process.env.PORT || 3000);
   console.log(`Application is running on localhost:${process.env.PORT ?? 3000}`);
