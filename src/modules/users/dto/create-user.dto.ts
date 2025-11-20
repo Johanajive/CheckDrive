@@ -25,8 +25,9 @@ export class CreateUserDTO {
 
     @ApiProperty({ example: 123456789, description: 'Documento de identificación' })
     @IsNotEmpty({ message: 'La cédula es obligatoria' })
-    @Matches(/^[0-9]{7,12}$/, { message: 'La cédula debe tener entre 7 y 12 dígitos, sin espacios ni letras' })
-    @Matches(/^[0-9]+$/, { message: 'La cédula solo permite números' })
+    @IsInt({message:"La cédula solo permite números enteros"})
+    @Min(1000000, {message:"La cédula debe tener mínimo 7 dígitos"})
+    @Max(999999999999, {message:"La cédula debe tener máximo 12 dígitos"})
     identificationDocument: number;
 
     @ApiProperty({ example: '3001234567', description: 'Teléfono celular (10 dígitos)' })
