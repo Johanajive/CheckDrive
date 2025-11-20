@@ -3,16 +3,33 @@ import { InspectionCenterEntity } from '../../inspectionCenter/entity/inspection
 import { Users } from '../../users/entity/user.entity';
 import { VehicleEntity } from '../../vehicles-documents/entity/vehicle.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 
 
 @Entity('appointments')
 export class Appointments {
+  @ApiProperty({
+    description: 'ID único y autogenerado de la cita.',
+    example: 789,
+    type: Number,
+  })
   @PrimaryGeneratedColumn()
   id_appointment: number;
 
+  @ApiProperty({
+    description: 'Fecha programada de la cita.',
+    example: '2025-12-10',
+    type: String,
+    format: 'date',
+  })
   @Column({ type: 'date', nullable: false })
   date: Date;
 
+  @ApiProperty({
+    description: 'Hora programada de la cita en formato HH:MM.',
+    example: '14:30',
+    type: String,
+  })
   @Column({ type: 'time', nullable: false })
   time: string;
 

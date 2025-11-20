@@ -1,27 +1,30 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty } from 'class-validator';
+import { IsInt, IsDateString, IsString, IsNotEmpty, Matches } from 'class-validator';
 
 export class CreateAppointmentDto {
-  @ApiProperty({ example: '2025-01-15', description: 'Fecha de la cita' })
-  @IsNotEmpty()
-  date: string;
-
-  @ApiProperty({ example: '10:30', description: 'Hora de la cita' })
-  @IsNotEmpty()
-  time: string;
-
-  @ApiProperty({ example: 1, description: 'ID del usuario asociado a la cita' })
   @IsInt()
   @IsNotEmpty()
   id_user: number;
 
-  @ApiProperty({ example: 1, description: 'ID del vehículo asociado a la cita' })
   @IsInt()
   @IsNotEmpty()
-  id_vehicle: number;
+  vehicle_id: number;
 
-  @ApiProperty({ example: 3, description: 'ID del centro de inspección donde se realizará la cita' })
   @IsInt()
   @IsNotEmpty()
-  id_center: number;
+  center_id: number;
+
+  @IsDateString()
+  @IsNotEmpty()
+  date: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, {
+    message: 'The time must be in HH:MM format',
+  })
+  time: string;
+
+  @IsString()
+  @IsNotEmpty()
+  status: string; // "Active", "Cancelled", etc.
 }

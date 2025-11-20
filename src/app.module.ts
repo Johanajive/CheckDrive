@@ -14,6 +14,7 @@ import { PaymentsModule } from './modules/payments/payments.module';
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
+      
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({

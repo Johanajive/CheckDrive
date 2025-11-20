@@ -1,4 +1,6 @@
 // src/appointments/appointments.service.ts
+// Service for managing appointments with CRUD operations
+// and integration with TypeORM
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -13,10 +15,9 @@ export class AppointmentsService {
     @InjectRepository(Appointments)
     private appointmentsRepository: Repository<Appointments>, // Inyección del repositorio de citas
     private readonly logsService: LogsService, // Inyección del LogsService
-  ) { }
+  ) {}
 
-  /** 
-   * Crear una nueva cita
+  /** * Crear una nueva cita
    * Registra un log después de crear la cita
    */
   async create(createAppointmentDto: CreateAppointmentDto): Promise<Appointments> {
@@ -47,6 +48,7 @@ export class AppointmentsService {
       content: 'Consulta general de citas.',
     });
 
+    // Se asume que las relaciones son correctas según tu entidad.
     return this.appointmentsRepository.find({
       relations: ['user', 'vehicle', 'reviewCenter'],
     });
@@ -82,8 +84,18 @@ export class AppointmentsService {
    * Registra un log después de actualizar
    */
   async update(id: number, updateAppointmentDto: UpdateAppointmentDto): Promise<Appointments> {
-    await this.appointmentsRepository.update(id, updateAppointmentDto);
-    const updatedAppointments = await this.findOne(id);
+    // Es mejor usar update o save si el registro ya existe.
+    // Usar 'update' y luego 'findOne' es una práctica común para obtener la entidad actualizada.
+    const result = await this.appointmentsRepository.update(id, updateAppointmentDto);
+
+    if (result.affected === 0) {
+      // Manejar el caso si el ID no existe antes de llamar a findOne.
+      // Se lanza una excepción si no se encontró nada para actualizar.
+      throw new NotFoundException(`Appointment with ID ${id} not found for update`);
+    }
+
+    // Requerimos findOne para obtener la entidad completa y lanzar NotFoundException si falla.
+    const updatedAppointments = await this.findOne(id); 
 
     // LOG: actualización
     await this.logsService.create({
@@ -96,16 +108,17 @@ export class AppointmentsService {
     return updatedAppointments;
   }
 
-  /** 
-   * Eliminar una cita (hard delete)
-   * Registra log de eliminación
+  /** * Eliminar una cita (Soft Delete: marcar como cancelada)
+   * Registra log de cancelación
    */
-  async remove(id: number): Promise<{ deleted: boolean; status: string }> {
-    const appointment = await this.findOne(id);
+  // MEJORA DE CONSISTENCIA: Hacer que la función devuelva la cita cancelada 
+  // en lugar de un objeto genérico, o cambiar el retorno a `void` si no se necesita el objeto.
+  async remove(id: number): Promise<Appointments> {
+    const appointment = await this.findOne(id); // findOne ya maneja el NotFoundException
 
-    // Soft delete = marcar como cancelada
+    // Soft delete: cambiar el estado a 'Cancelled'
     appointment.status = 'Cancelled';
-    await this.appointmentsRepository.save(appointment);
+    const cancelledAppointment = await this.appointmentsRepository.save(appointment);
 
     await this.logsService.create({
       date: new Date(),
@@ -114,7 +127,7 @@ export class AppointmentsService {
       content: `Cita cancelada con ID: ${id}`,
     });
 
-    return { deleted: true, status: 'Cancelled' };
+    // Devuelve la entidad de la cita cancelada.
+    return cancelledAppointment;
   }
-
 }
