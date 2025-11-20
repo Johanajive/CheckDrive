@@ -2,8 +2,8 @@
 import { Exclude } from "class-transformer";
 import { Column, Entity, OneToMany } from "typeorm";
 import { PrimaryGeneratedColumn } from "typeorm";
-import { RolesEnum } from "src/common/enum/roles.enum";
-import { Appointments } from "src/modules/appointments/entity/appointments.entity";
+import { RolesEnum } from "../../../common/enum/roles.enum";
+import { Appointments } from '../../appointments/entity/appointments.entity';
 
 @Entity()
 export class Users {

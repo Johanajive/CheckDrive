@@ -21,7 +21,7 @@ import { RolesEnum } from 'src/common/enum/roles.enum';
 @UseGuards(JwtAuthGuard, RolesGuard)
 
 // Define la ruta base del controlador: /users
-@Controller('users')
+@Controller('/api/users')
 export class UsersController {
 
   // Inyección del servicio UsersService para acceder a la lógica de negocio.

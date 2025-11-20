@@ -1,7 +1,7 @@
 
-import { InspectionCenterEntity } from 'src/modules/inspectionCenter/entity/inspectionCenter.entity';
-import { Users } from 'src/modules/users/entity/user.entity';
-import { VehicleEntity } from 'src/modules/vehicles-documents/entity/vehicle.entity';
+import { InspectionCenterEntity } from '../../inspectionCenter/entity/inspectionCenter.entity';
+import { Users } from '../../users/entity/user.entity';
+import { VehicleEntity } from '../../vehicles-documents/entity/vehicle.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity()

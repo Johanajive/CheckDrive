@@ -37,7 +37,8 @@ import { RolesEnum } from 'src/common/enum/roles.enum';
 // ====== Global guards for controller ======
 @UseGuards(JwtAuthGuard, RolesGuard)
 
-@Controller('vehicles-documents')
+
+@Controller('/api/vehicles-documents')
 export class VehiclesDocumentsController {
   constructor(private readonly service: VehiclesDocumentsService) {}
 

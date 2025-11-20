@@ -9,7 +9,7 @@ import { LoginDTO } from '../users/dto/login.dto';
 @ApiTags('Auth')
 
 // Ruta base: /auth
-@Controller('auth')
+@Controller('/api/auth')
 export class AuthController {
 
   // Inyección del AuthService para manejar autenticación y registro.

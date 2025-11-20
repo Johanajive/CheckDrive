@@ -21,7 +21,7 @@ import { RolesEnum } from 'src/common/enum/roles.enum';
 // Controlador del módulo de citas (Appointments)
 // Maneja las rutas HTTP relacionadas con creación, consulta, actualización y cancelación de citas
 
-@Controller('appointments')
+@Controller('/api/appointments')
 @UseGuards(JwtAuthGuard, RolesGuard)
 // Aplica autenticación JWT y validación por roles a todas las rutas de este controlador
 export class AppointmentsController {
@@ -33,7 +33,7 @@ export class AppointmentsController {
    * - Recibe un DTO para validar la estructura de los datos
    */
   @Post()
-  @Roles(RolesEnum.USER)
+  @Roles(RolesEnum.USER, RolesEnum.ADMIN)
   create(@Body() dto: CreateAppointmentDto) {
     return this.appointmentsService.create(dto);
   }
