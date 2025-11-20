@@ -7,11 +7,11 @@ export class CreateAppointmentDto {
 
   @IsInt()
   @IsNotEmpty()
-  vehicle_id: number;
+  id_vehicle: number;  // ← Cambiado de vehicle_id
 
   @IsInt()
   @IsNotEmpty()
-  center_id: number;
+  id_center: number;   // ← Cambiado de center_id
 
   @IsDateString()
   @IsNotEmpty()
@@ -26,5 +26,5 @@ export class CreateAppointmentDto {
 
   @IsString()
   @IsNotEmpty()
-  status: string; // "Active", "Cancelled", etc.
+  status: string;
 }
